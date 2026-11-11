@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工具中心 · TestHub 自动化测试一体化平台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/console.css">
+<link rel="stylesheet" href="assets/css/sidebar.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="index.html"><span class="logo-mark">T</span><span>TestHub<small>一体化测试平台</small></span></a>
+    <div class="nav-search">
+      <input id="globalSearch" type="text" placeholder="搜索用例 / 工具 / 指标…" autocomplete="off">
+      <div class="search-pop" id="searchPop"></div>
+    </div>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="ui.html">界面测试</a>
+      <a href="api.html">接口测试</a>
+      <a href="performance.html">性能测试</a>
+      <a href="ai.html">智能用例</a>
+      <a href="tools.html" class="active">工具中心</a>
+      <a href="about.html">联系我们</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap inner">
+    <div class="crumb"><a href="index.html">首页</a> / 工具中心</div>
+    <h1>工具中心</h1>
+    <p class="desc">
+      本组六项测试用到的全部工具，一张卡片直达：点击「打开官网 / 下载 / 文档」即可在新标签页进入对应站点。
+      Katalon、Apifox、Bruno、JMeter 为桌面程序，浏览器出于安全限制无法直接拉起本地应用，请从官网下载安装后使用；
+      AngusTester 为 SaaS 平台，可直接在浏览器中登录使用。
+    </p>
+    <div class="chips">
+      <span class="chip">6 款工具</span>
+      <span class="chip">4 类测试</span>
+      <span class="chip">官网 / 下载 / 文档直达</span>
+      <span class="chip">AngusTester 三入口</span>
+    </div>
+    <div class="tool-links">
+      <span class="tl-label">快速跳转：</span>
+      <a href="https://jmeter.apache.org/download_jmeter.cgi" target="_blank" rel="noopener">下载 JMeter ↗</a>
+      <a href="https://locust.io/" target="_blank" rel="noopener">Locust ↗</a>
+      <a href="https://apifox.com/" target="_blank" rel="noopener">Apifox ↗</a>
+      <a href="https://www.usebruno.com/downloads" target="_blank" rel="noopener">Bruno ↗</a>
+      <a href="https://katalon.com/download" target="_blank" rel="noopener">Katalon ↗</a>
+      <a href="https://gm.anguskit.com/" target="_blank" rel="noopener">AngusTester 登录 ↗</a>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="section-head">
+      <div><h2>测试工具矩阵</h2><p>点击卡片上的按钮直达官网、下载页与官方文档</p></div>
+    </div>
+    <div class="tools-grid" id="toolGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="console">
+      <h3>❓ 为什么有的工具点开是官网而不是软件本身？</h3>
+      <p class="sub">浏览器安全模型说明（答辩被问到可以这样回答）</p>
+      <div class="table-wrap" style="box-shadow:none">
+        <table class="data">
+          <thead><tr><th style="width:150px">工具</th><th>形态</th><th>平台上的打开方式</th></tr></thead>
+          <tbody>
+            <tr><td>JMeter / Katalon / Apifox / Bruno</td><td>桌面应用程序（需安装 Java / 独立客户端）</td><td>浏览器不允许网页直接启动本地 .exe（避免恶意网页调用本机程序），因此按钮直达官网下载页，安装后从开始菜单启动</td></tr>
+            <tr><td>Locust</td><td>Python 库，命令行启动</td><td>按钮直达官网与 PyPI 安装页，<code>pip install locust</code> 后用 <code>locust</code> 命令启动 Web 管理界面</td></tr>
+            <tr><td>AngusTester</td><td>SaaS 云平台</td><td>纯在线服务，提供 GM 工作台（登录）、测试控制台（项目/用例/执行）、AngusAI 对话三个直达入口，无需安装</td></tr>
+            <tr><td>JSONPlaceholder</td><td>公开 REST 接口服务</td><td>接口测试页的「在线接口测试台」可直接对其发送真实请求</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <div>TestHub · 自动化测试一体化平台　|　《软件质量保证与测试》课程作业 · 第五组</div>
+    <div>数据来源：本组 6 份测试报告　|　所有截图均为实测取证　|　<a href="about.html">关于平台</a></div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/console.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/sidebar.js"></script>
+</body>
+</html>

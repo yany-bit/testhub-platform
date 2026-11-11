@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>界面测试 · TestHub 一体化测试平台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/console.css">
+<link rel="stylesheet" href="assets/css/sidebar.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="index.html"><span class="logo-mark">T</span><span>TestHub<small>一体化测试平台</small></span></a>
+    <div class="nav-search">
+      <input id="globalSearch" type="text" placeholder="搜索用例 / 工具 / 指标…" autocomplete="off">
+      <div class="search-pop" id="searchPop"></div>
+    </div>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="ui.html">界面测试</a>
+      <a href="api.html">接口测试</a>
+      <a href="performance.html">性能测试</a>
+      <a href="ai.html">智能用例</a>
+      <a href="tools.html">工具中心</a>
+      <a href="about.html">联系我们</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap inner">
+    <div class="crumb"><a href="index.html">首页</a> / 界面测试</div>
+    <h1>界面测试</h1>
+    <p class="desc">
+      使用 Katalon Studio 对京东 Web 的 5 个页面开展全量界面检查：6 个分组、75 条硬断言、23 条只记录不判失败的信息项。
+      每条断言独立 try/catch，一项失败不中断其余检查，最终以 75/75、100% 通过率完成验收。
+    </p>
+    <div class="chips">
+      <span class="chip">Katalon Studio 11.7.0</span>
+      <span class="chip">Edge 157</span>
+      <span class="chip">Groovy / Selenium 4.46</span>
+      <span class="chip">5 个页面</span>
+      <span class="chip">75/75 PASS</span>
+    </div>
+    <div class="tool-links">
+      <span class="tl-label">工具入口：</span>
+      <a href="https://katalon.com/download" target="_blank" rel="noopener">Katalon Studio 官网 ↗</a>
+      <a href="https://www.selenium.dev/" target="_blank" rel="noopener">Selenium 官网 ↗</a>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="console" id="uiQuery">
+      <h3>🔍 断言分组查询器</h3>
+      <p class="sub">选择 A–F 任一分组或查看全部，立即列出该组的断言数量、检查内容与逐条断言明细（示例条目，完整明细见原始报告 01_result.txt）。</p>
+      <div class="ctl-row">
+        <label>断言分组</label>
+        <select id="uiGroup">
+          <option value="all" selected>全部（6 组 / 75 条）</option>
+          <option value="A">A 环境（7 条断言）</option>
+          <option value="B">B 首页（31 条断言）</option>
+          <option value="C">C 登录页（17 条断言）</option>
+          <option value="D">D 帮助中心（11 条断言）</option>
+          <option value="E">E 受限页面（9 条断言）</option>
+          <option value="F">F 证据（4 条信息项）</option>
+        </select>
+      </div>
+      <div id="uiOut"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="stats">
+      <div class="stat"><div class="k">硬断言</div><div class="v">75<small>条</small></div><div class="d">PASS 75 / FAIL 0</div></div>
+      <div class="stat"><div class="k">通过率</div><div class="v">100<small>%</small></div><div class="d">verdict PASS</div></div>
+      <div class="stat"><div class="k">信息记录项</div><div class="v">23<small>条</small></div><div class="d">只采集、不判失败</div></div>
+      <div class="stat"><div class="k">正式运行</div><div class="v">4<small>次</small></div><div class="d">3 次失败 + 1 次通过验收</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>测试设计</h2>
+        <p>覆盖环境、首页、登录页、帮助中心、受限页面与证据留痕六个维度</p>
+      </div>
+    </div>
+
+    <div class="grid-2-1">
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th class="c">分组</th><th class="c">断言</th><th class="c">信息</th><th>测试内容</th></tr></thead>
+          <tbody>
+            <tr><td class="c strong">A 环境</td><td class="c">7</td><td class="c">0</td><td>Edge 启动、指纹伪装、版本、会话、Cookie、视口</td></tr>
+            <tr><td class="c strong">B 首页</td><td class="c">31</td><td class="c">11</td><td>URL / 标题 / 完整渲染 / 风控层、导航、搜索框、Logo、图片链接、控制台、性能、响应式</td></tr>
+            <tr><td class="c strong">C 登录页</td><td class="c">17</td><td class="c">2</td><td>表单、扫码 / 密码 / 短信三种方式、第三方入口、页脚</td></tr>
+            <tr><td class="c strong">D 帮助中心</td><td class="c">11</td><td class="c">2</td><td>导航、帮助搜索框可输入、链接与图片统计</td></tr>
+            <tr><td class="c strong">E 受限页面</td><td class="c">9</td><td class="c">4</td><td>登录跳转落地页 5 项 + 商品频控落地页 4 项</td></tr>
+            <tr><td class="c strong">F 证据</td><td class="c">0</td><td class="c">4</td><td>3 张截图与原始日志的留痕记录</td></tr>
+            <tr><td class="c strong">合计</td><td class="c strong">75</td><td class="c strong">23</td><td>初版 66 项，修复 B06 时补齐 E 组 9 项后为 75 项</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-card">
+        <h4>各分组断言数量</h4>
+        <div class="sub">B 组首页占比最高（31 条，41%）</div>
+        <div class="chart" id="chart-groups"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>执行时间线</h2>
+        <p>失败不是重试碰运气：两次修复都有可复核的证据</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-pad">
+        <div class="timeline">
+          <div class="tl-item good"><span class="t">10:48</span> <span class="d">百度冒烟验证整条链路，Passed，确认环境可用</span></div>
+          <div class="tl-item"><span class="t">12:15</span> <span class="d">5 页面独立探测，建立 JD_Full_UI_Test，确定可测边界与风控应对</span></div>
+          <div class="tl-item bad"><span class="t">12:43:56</span> <span class="d">第 1 次正式运行：65/66 FAIL，仅 B06 失败</span></div>
+          <div class="tl-item bad"><span class="t">12:43:58</span> <span class="d">第 2 次正式运行：结果一致，稳定复现</span></div>
+          <div class="tl-item"><span class="t">12:55</span> <span class="d">第一次修复（v2）：B06 改判可视区域，补 E 组 9 条断言</span></div>
+          <div class="tl-item bad"><span class="t">13:01:02</span> <span class="d">第 3 次正式运行：Error，仅跑 14 项（Groovy 动态类型错误）</span></div>
+          <div class="tl-item"><span class="t">13:06</span> <span class="d">第二次修复（v2.1）+ 独立完整预跑：75/75 PASS、30 秒零异常</span></div>
+          <div class="tl-item good"><span class="t">13:08:47</span> <span class="d">第 4 次正式运行（验收）：75/75 PASS、100%</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr><th class="c">#</th><th>根因</th><th>修复</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="c">1</td>
+                <td>京东首页 DOM 常驻离屏兜底层（距视口顶部约 2,388 px），旧脚本用整页 innerText 全局搜“当前页面异常”，把看不见的模板也算进去 → 误报</td>
+                <td>新增“文案是否落在可视区域”判定，B06 只判可见降级层；E 组升级为 9 条断言</td>
+              </tr>
+              <tr>
+                <td class="c">2</td>
+                <td>说明行写成“布尔值 + 字符串”，Groovy 没有布尔值加法，运行时抛异常记为 FATAL；语法检查抓不到动态类型错误</td>
+                <td>拼接前统一 String.valueOf(...) 转字符串；增加“脱离 Katalon 的完整预跑”作为运行前验证</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout" style="margin-top:14px">
+          <b>预探测的价值：</b>京东会识别自动化浏览器。不伪装时首页只返回风控降级页「当前页面异常」，可见文本约 105 字、没有搜索框。
+          先探测、再写用例，才避免了把风控页当成功能缺陷。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>执行取证</h2><p>脚本自起浏览器、自建结果文件夹；每次运行产出明细、HTML 报告、页面截图、原始日志与检查清单</p></div></div>
+    <div class="shots">
+      <figure class="shot">
+        <img src="assets/img/ui-home.png" alt="京东首页最终验收">
+        <figcaption><b>最终验收 · 京东首页：</b>导航、搜索框、商品楼层完整渲染，B 组 31 项断言全部 PASS。</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/ui-login.png" alt="京东登录页最终验收">
+        <figcaption><b>最终验收 · 登录页：</b>扫码 / 密码 / 短信三种方式、第三方入口与页脚齐全，C 组 17 项全 PASS。</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/ui-error.png" alt="Katalon Error 界面">
+        <figcaption><b>第 3 次运行报错现场：</b>40 个测试步骤 39 通过、1 Error、9.512 s，真实原因需到结果明细中查找。</figcaption>
+      </figure>
+      <div class="shot" style="display:flex;flex-direction:column;justify-content:center;gap:10px">
+        <h3 style="margin:0;font-size:16px">Katalon Studio 实测评价</h3>
+        <ul class="list" style="margin:0">
+          <li><b>优点：</b>GUI 点 Run 即运行；自带 JRE/Groovy/Selenium/驱动；日志逐步追踪详细；报告体系完整；Groovy 可自由封装断言</li>
+          <li><b>不足：</b>默认浏览器配置名是 Chrome，本机只有 Edge 时易误导；内置驱动版本滞后；单用例报告落系统临时目录；动态类型错误运行前抓不到</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="callout ok">
+      <b>测试结论</b>
+      <ul>
+        <li>环境、驱动、结果归档与全量用例全部跑通并可复用，后续再测直接点 Run，不用重新配置</li>
+        <li>两次修复均定位到明确根因（离屏 DOM 误报、动态类型拼接崩溃），并有截屏与预跑数据可复核</li>
+        <li>局限：75/75 说明“这些检查点在当时通过”，不等于网站没有缺陷；未覆盖真实登录、搜索提交、下单支付，搜索跳登录与商品 403 属站点限流</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <div>TestHub · 自动化测试一体化平台　|　《软件质量保证与测试》课程作业 · 第五组</div>
+    <div><a href="api.html">← 上一模块：接口测试</a>　|　<a href="ai.html">下一模块：智能用例 →</a></div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/console.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+barChart("#chart-groups", {
+  labels: ["A 环境", "B 首页", "C 登录页", "D 帮助中心", "E 受限页面"],
+  values: [7, 31, 17, 11, 9],
+  unit: " 条",
+  colors: ["#94a3b8", "#2f80ed", "#0d9488", "#7c3aed", "#d97706"]
+});
+</script>
+<script src="assets/js/sidebar.js"></script>
+</body>
+</html>

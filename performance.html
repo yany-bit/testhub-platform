@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>性能测试 · TestHub 一体化测试平台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/console.css">
+<link rel="stylesheet" href="assets/css/sidebar.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="index.html"><span class="logo-mark">T</span><span>TestHub<small>一体化测试平台</small></span></a>
+    <div class="nav-search">
+      <input id="globalSearch" type="text" placeholder="搜索用例 / 工具 / 指标…" autocomplete="off">
+      <div class="search-pop" id="searchPop"></div>
+    </div>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="ui.html">界面测试</a>
+      <a href="api.html">接口测试</a>
+      <a href="performance.html">性能测试</a>
+      <a href="ai.html">智能用例</a>
+      <a href="tools.html">工具中心</a>
+      <a href="about.html">联系我们</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap inner">
+    <div class="crumb"><a href="index.html">首页</a> / 性能测试</div>
+    <h1>性能测试</h1>
+    <p class="desc">
+      用 JMeter 与 Locust 对腾讯网首页开展同参数、同时段对照压测，再用 JMeter 对腾讯视频与芒果TV 两个同类视频网站做相同参数的对比测试；
+      统一观测平均响应时间、95% 百分位、最大值、异常率与吞吐量五项指标。
+    </p>
+    <div class="chips">
+      <span class="chip">Apache JMeter 5.6.3</span>
+      <span class="chip">Locust 2.x</span>
+      <span class="chip">最高 200 并发</span>
+      <span class="chip">13 组负载场景</span>
+      <span class="chip">全部 0% 失败</span>
+    </div>
+    <div class="tool-links">
+      <span class="tl-label">工具入口：</span>
+      <a href="https://jmeter.apache.org/" target="_blank" rel="noopener">Apache JMeter 官网 ↗</a>
+      <a href="https://jmeter.apache.org/download_jmeter.cgi" target="_blank" rel="noopener">下载 JMeter ↗</a>
+      <a href="https://locust.io/" target="_blank" rel="noopener">Locust 官网 ↗</a>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="console" id="perfQuery">
+      <h3>🔍 性能数据查询器</h3>
+      <p class="sub">选择工具、目标与并发档位，立即出对应场景的实测指标卡与响应时间对比图（数据全部来自本组实测报告）。</p>
+      <div class="ctl-row">
+        <label>测试工具</label>
+        <select id="pfTool">
+          <option value="locust">Locust · 腾讯网（5 组负载）</option>
+          <option value="jmeter_qq">JMeter · 腾讯网（4+1 档）</option>
+          <option value="jmeter_video">JMeter · 腾讯视频 vs 芒果TV</option>
+        </select>
+        <label>并发用户 / 线程</label>
+        <select id="pfUsers">
+          <option value="10">10</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="200" selected>200</option>
+        </select>
+      </div>
+      <div class="stats" id="pfOut"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="stats">
+      <div class="stat"><div class="k">Locust 累计请求</div><div class="v">9,556<small>次</small></div><div class="d">5 组负载，全部成功</div></div>
+      <div class="stat"><div class="k">JMeter 正式用例</div><div class="v">4<small>档</small></div><div class="d">10 / 50 / 100 / 200 线程</div></div>
+      <div class="stat"><div class="k">请求失败率</div><div class="v">0<small>%</small></div><div class="d">两站 8 组用例异常率均为 0</div></div>
+      <div class="stat"><div class="k">峰值平均响应</div><div class="v">1,567<small>ms</small></div><div class="d">Locust 200 用户持续压测</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>同站工具对比：JMeter 与 Locust</h2>
+        <p>同一网址、同一网络时段、相同并发档位与相同启动节奏（线程数 ÷ Ramp-up = 孵化速率）</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <h4>平均响应时间对比</h4>
+        <div class="sub">单位 ms · 并发档位对齐</div>
+        <div class="chart" id="chart-rt"></div>
+      </div>
+      <div class="chart-card">
+        <h4>吞吐量对比</h4>
+        <div class="sub">单位 req/s · JMeter 受 Ramp-up 节奏限制</div>
+        <div class="chart" id="chart-rps"></div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:18px">
+      <b>如何正确理解两条曲线的差距：</b>JMeter 每个线程只请求 1 次（循环次数 1），样本数即线程数，发压窗口短、只覆盖启动爬坡阶段，平均响应自然偏低、吞吐量约等于“线程数 ÷ Ramp-up”；
+      Locust 用户孵化后持续请求，累计样本从 55 个到 5,781 个，负载稳定后排队时延累积，平均值被显著拉高。
+      两者口径不同，<b>不能直接比较绝对值</b>，但可以共同印证一点：腾讯网首页在 200 并发以内零失败，而 Locust 持续压测显示 200 用户档位平均响应升至 1,567 ms，已接近性能拐点。
+    </div>
+
+    <h3 style="margin:26px 0 12px;font-size:16px">Locust 五组用例结果</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>用例</th><th class="c">并发用户</th><th class="c">孵化速率</th><th class="c">请求数</th>
+          <th class="num">平均响应 (ms)</th><th class="num">中位数 (ms)</th><th class="num">95% 百分位 (ms)</th>
+          <th class="num">最大 (ms)</th><th class="c">失败率</th><th class="num">RPS</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>用例 1</td><td class="c">10</td><td class="c">1</td><td class="c">55</td><td class="num">514.84</td><td class="num">500</td><td class="num">780</td><td class="num">821</td><td class="c"><span class="badge ok">0</span></td><td class="num">3.63</td></tr>
+          <tr><td>用例 2</td><td class="c">50</td><td class="c">2</td><td class="c">642</td><td class="num">649.64</td><td class="num">650</td><td class="num">820</td><td class="num">1,023</td><td class="c"><span class="badge ok">0</span></td><td class="num">35</td></tr>
+          <tr><td>用例 3</td><td class="c">100</td><td class="c">2</td><td class="c">2,271</td><td class="num">774.99</td><td class="num">640</td><td class="num">1,500</td><td class="num">2,284</td><td class="c"><span class="badge ok">0</span></td><td class="num">55</td></tr>
+          <tr><td>用例 4</td><td class="c">200</td><td class="c">2</td><td class="c">5,781</td><td class="num strong">1,566.98</td><td class="num">1,400</td><td class="num">3,000</td><td class="num">4,610</td><td class="c"><span class="badge ok">0</span></td><td class="num">51.4</td></tr>
+          <tr><td>用例 5 · 瞬时增压</td><td class="c">200</td><td class="c">20</td><td class="c">807</td><td class="num">1,369.86</td><td class="num">1,000</td><td class="num">2,700</td><td class="num">2,878</td><td class="c"><span class="badge ok">0</span></td><td class="num">61.7</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin:26px 0 12px;font-size:16px">JMeter 五组用例结果</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>用例</th><th class="c">线程数</th><th class="c">Ramp-up (s)</th><th class="c">样本数</th>
+          <th class="num">平均值 (ms)</th><th class="num">95% 百分位 (ms)</th><th class="num">最大值 (ms)</th>
+          <th class="c">异常 %</th><th class="num">吞吐量 (req/s)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>用例 1</td><td class="c">10</td><td class="c">10</td><td class="c">10</td><td class="num">299</td><td class="num">393</td><td class="num">411</td><td class="c"><span class="badge ok">0</span></td><td class="num">1.1</td></tr>
+          <tr><td>用例 2</td><td class="c">50</td><td class="c">25</td><td class="c">50</td><td class="num">258</td><td class="num">343</td><td class="num">402</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+          <tr><td>用例 3</td><td class="c">100</td><td class="c">50</td><td class="c">100</td><td class="num">273</td><td class="num">387</td><td class="num">418</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+          <tr><td>用例 4</td><td class="c">200</td><td class="c">100</td><td class="c">200</td><td class="num">259</td><td class="num">362</td><td class="num">400</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+          <tr><td>补充 · 瞬时加压</td><td class="c">200</td><td class="c">10</td><td class="c">200</td><td class="num">262</td><td class="num">366</td><td class="num">413</td><td class="c"><span class="badge ok">0</span></td><td class="num strong">19.8</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>同类网站对比：腾讯视频 与 芒果TV</h2>
+        <p>相同用例参数、背靠背执行；两站均为公开可访问的视频门户首页</p>
+      </div>
+    </div>
+
+    <div class="grid-2-1">
+      <div class="chart-card">
+        <h4>平均响应时间对比</h4>
+        <div class="sub">单位 ms · 芒果TV 四个档位均高于腾讯视频 20~50 ms</div>
+        <div class="chart" id="chart-site"></div>
+      </div>
+      <div class="card card-pad">
+        <h3 style="margin:0 0 10px;font-size:16px">差异从哪来</h3>
+        <ul class="list">
+          <li>腾讯视频：服务器标识 Lego Server，首页约 <b>141 KB</b>，实测 197~229 ms</li>
+          <li>芒果TV：Tengine 服务器，首页仅约 <b>21 KB</b>，但访问存在<b>重定向跳转</b>，实测 246~252 ms</li>
+          <li>结论：页面体积小不等于响应快，重定向与处理路径开销才是主因</li>
+          <li>两站吞吐量完全一致（1.1 → 2.0 req/s），该数值受本机发压能力与 Ramp-up 节奏限制，不代表服务器上限</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:18px">
+      <table class="data">
+        <thead>
+          <tr><th>网站</th><th class="c">线程数</th><th class="num">平均值 (ms)</th><th class="num">95% 百分位 (ms)</th>
+          <th class="num">最小值 (ms)</th><th class="num">最大值 (ms)</th><th class="c">异常 %</th><th class="num">吞吐量 (req/s)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="4" class="strong">腾讯视频</td><td class="c">10</td><td class="num">197</td><td class="num">213</td><td class="num">178</td><td class="num">234</td><td class="c"><span class="badge ok">0</span></td><td class="num">1.1</td></tr>
+          <tr><td class="c">50</td><td class="num">225</td><td class="num">262</td><td class="num">186</td><td class="num">282</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+          <tr><td class="c">100</td><td class="num">212</td><td class="num">245</td><td class="num">167</td><td class="num">285</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+          <tr><td class="c">200</td><td class="num">229</td><td class="num">263</td><td class="num">186</td><td class="num">413</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+          <tr><td rowspan="4" class="strong">芒果TV</td><td class="c">10</td><td class="num">246</td><td class="num">299</td><td class="num">200</td><td class="num">310</td><td class="c"><span class="badge ok">0</span></td><td class="num">1.1</td></tr>
+          <tr><td class="c">50</td><td class="num">251</td><td class="num">283</td><td class="num">228</td><td class="num">306</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+          <tr><td class="c">100</td><td class="num">252</td><td class="num">305</td><td class="num">220</td><td class="num">364</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+          <tr><td class="c">200</td><td class="num">251</td><td class="num">295</td><td class="num">221</td><td class="num">400</td><td class="c"><span class="badge ok">0</span></td><td class="num">2.0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><h2>执行取证</h2><p>测试执行过程的原始截图，全部按“每档运行前清空结果”的规范采集</p></div></div>
+    <div class="shots">
+      <figure class="shot">
+        <img src="assets/img/perf-locust.png" alt="Locust 统计结果">
+        <figcaption><b>Locust 统计页面：</b>实时给出请求数、失败率、响应时间分布与 RPS，是本次采集五组数据的主要界面。</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/perf-locust-trend.png" alt="Locust 趋势图">
+        <figcaption><b>Locust 趋势图表：</b>并发爬坡过程中吞吐量与响应时间的实时曲线，用于判断拐点出现的位置。</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/perf-jmeter.png" alt="JMeter 聚合报告">
+        <figcaption><b>JMeter 聚合报告：</b>样本数、平均值、中位数、90/95/99 百分位、异常率与吞吐量一屏呈现，用于档位间对照。</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/perf-cmp.png" alt="两站平均响应时间对比">
+        <figcaption><b>两站对比折线：</b>腾讯视频与芒果TV 四级并发下的平均响应时间，芒果TV 全程略高但走势平稳。</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="callout ok">
+      <b>测试结论</b>
+      <ul>
+        <li>腾讯网首页在 10~200 并发区间零失败，平均响应稳定在 258~299 ms（JMeter 口径），服务稳定性良好</li>
+        <li>Locust 持续压测显示 100 用户吞吐达 55 RPS，200 用户平均响应升至 1,567 ms，接近性能拐点；突发增压（孵化速率 20）对系统的冲击明显大于平稳加压</li>
+        <li>腾讯视频与芒果TV 在 200 线程内均零异常，芒果TV 因重定向跳转响应时间偏高 20~50 ms，与页面体积无关</li>
+        <li>优化建议：应用层加缓存、数据库优化索引与连接池、部署层负载均衡，并增加限流熔断保护核心链路</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <div>TestHub · 自动化测试一体化平台　|　《软件质量保证与测试》课程作业 · 第五组</div>
+    <div><a href="index.html">返回首页</a>　|　<a href="api.html">下一模块：接口测试 →</a></div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/console.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+lineChart("#chart-rt", {
+  labels: ["10 并发", "50 并发", "100 并发", "200 并发"],
+  unit: "ms",
+  series: [
+    { name: "JMeter 平均响应", color: "#2f80ed", data: [299, 258, 273, 259] },
+    { name: "Locust 平均响应", color: "#d97706", data: [515, 650, 775, 1567] }
+  ]
+});
+lineChart("#chart-rps", {
+  labels: ["10 并发", "50 并发", "100 并发", "200 并发"],
+  unit: "req/s",
+  series: [
+    { name: "JMeter 吞吐量", color: "#0d9488", data: [1.1, 2.0, 2.0, 2.0] },
+    { name: "Locust RPS", color: "#7c3aed", data: [3.63, 35, 55, 51.4] }
+  ]
+});
+lineChart("#chart-site", {
+  labels: ["10 线程", "50 线程", "100 线程", "200 线程"],
+  unit: "ms",
+  series: [
+    { name: "腾讯视频", color: "#2f80ed", data: [197, 225, 212, 229] },
+    { name: "芒果TV", color: "#d97706", data: [246, 251, 252, 251] }
+  ]
+});
+</script>
+<script src="assets/js/sidebar.js"></script>
+</body>
+</html>

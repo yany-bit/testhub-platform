@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>联系我们 · TestHub 一体化测试平台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/console.css">
+<link rel="stylesheet" href="assets/css/sidebar.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="index.html"><span class="logo-mark">T</span><span>TestHub<small>一体化测试平台</small></span></a>
+    <div class="nav-search">
+      <input id="globalSearch" type="text" placeholder="搜索用例 / 工具 / 指标…" autocomplete="off">
+      <div class="search-pop" id="searchPop"></div>
+    </div>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="ui.html">界面测试</a>
+      <a href="api.html">接口测试</a>
+      <a href="performance.html">性能测试</a>
+      <a href="ai.html">智能用例</a>
+      <a href="tools.html">工具中心</a>
+      <a href="about.html">联系我们</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap inner">
+    <div class="crumb"><a href="index.html">首页</a> / 联系我们</div>
+    <h1>关于平台</h1>
+    <p class="desc">
+      TestHub 是《软件质量保证与测试》课程作业的展示平台，把小组六位成员在不同工具上完成的测试项目集中到一个入口，
+      统一呈现测试设计、执行证据与对比结论。它是一个纯静态站点，不连接后端、不采集任何数据。
+    </p>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="grid-2">
+      <div class="card card-pad">
+        <h3 style="margin:0 0 10px;font-size:16px">平台结构</h3>
+        <ul class="list">
+          <li><b>首页：</b>四大测试能力入口 + 六个测试项目总览 + 一体化流程</li>
+          <li><b>界面测试：</b>Katalon 京东 75 条断言、执行时间线与问题修复记录</li>
+          <li><b>接口测试：</b>Apifox 8 条、Bruno 5 条用例结果与工具对比</li>
+          <li><b>性能测试：</b>JMeter / Locust 同站对比、腾讯视频与芒果TV 两站对比</li>
+          <li><b>智能用例：</b>AngusTester AI 生成 8 条用例并执行取证</li>
+        </ul>
+        <p style="font-size:13px;color:var(--muted);margin:12px 0 0">
+          技术实现：HTML + CSS + 原生 JavaScript（图表为内联 SVG 手绘，无第三方依赖），可直接双击打开或部署到任意静态托管。
+        </p>
+      </div>
+
+      <div class="card card-pad">
+        <h3 style="margin:0 0 10px;font-size:16px">联系我们</h3>
+        <div class="table-wrap" style="box-shadow:none">
+          <table class="data">
+            <tbody>
+              <tr><td style="width:88px" class="strong">地址</td><td>江苏省徐州市 · 徐州工程学院</td></tr>
+              <tr><td class="strong">电子邮件</td><td><a href="mailto:support@example.com">support@example.com</a></td></tr>
+              <tr><td class="strong">电话</td><td><a href="tel:+8651600000000">(0516) 0000-0000</a></td></tr>
+              <tr><td class="strong">课程</td><td>《软件质量保证与测试》</td></tr>
+              <tr><td class="strong">小组</td><td>第五组（6 人）</td></tr>
+              <tr><td class="strong">反馈</td><td>使用过程中如发现数据或结论有误，欢迎通过邮箱或电话反馈；工作日内 24 小时内回复</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:12.5px;color:var(--muted);margin:12px 0 0">
+          注：邮箱与电话为占位信息，提交前请在 about.html 的“联系信息”表格中替换为本组真实联系方式。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div><h2>工具矩阵</h2><p>四类测试能力、六款工具、五个被测站点与一个公开接口服务</p></div>
+    </div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>测试类型</th><th>工具</th><th>被测对象</th><th class="c">规模</th><th class="c">结果</th><th>产出证据</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="badge info">界面</span></td><td>Katalon Studio 11.7.0</td><td>京东 5 个页面</td><td class="c">75 条断言</td><td class="c"><span class="badge ok">100%</span></td><td>HTML 报告 + 3 张页面截图 + 原始日志</td></tr>
+          <tr><td><span class="badge info">性能</span></td><td>Locust 2.x</td><td>腾讯网首页</td><td class="c">5 组负载</td><td class="c"><span class="badge ok">0% 失败</span></td><td>统计页 + 趋势图</td></tr>
+          <tr><td><span class="badge info">性能</span></td><td>Apache JMeter 5.6.3</td><td>腾讯网首页</td><td class="c">4 档 + 补充</td><td class="c"><span class="badge ok">0% 异常</span></td><td>聚合报告 + 图形结果</td></tr>
+          <tr><td><span class="badge info">性能</span></td><td>Apache JMeter 5.6.3</td><td>腾讯视频 / 芒果TV</td><td class="c">8 组用例</td><td class="c"><span class="badge ok">0% 异常</span></td><td>聚合报告 + 对比折线</td></tr>
+          <tr><td><span class="badge info">接口</span></td><td>Apifox</td><td>JSONPlaceholder posts</td><td class="c">8 条用例</td><td class="c"><span class="badge ok">全部通过</span></td><td>请求/响应截图 + 自动化报告</td></tr>
+          <tr><td><span class="badge info">接口</span></td><td>Bruno v4.3.0</td><td>JSONPlaceholder users / posts</td><td class="c">5 条用例</td><td class="c"><span class="badge ok">全部通过</span></td><td>断言结果截图</td></tr>
+          <tr><td><span class="badge info">智能</span></td><td>AngusTester + DeepSeek</td><td>百度首页</td><td class="c">8 条用例</td><td class="c"><span class="badge warn">1 个缺陷</span></td><td>AI 用例表 + 执行截图</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div><h2>小组分工</h2><p>姓名、学号、负责内容均可点击单元格直接填写，内容自动保存到本浏览器，刷新不会丢失</p></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" id="fgSave">保存</button>
+        <button class="btn btn-ghost" id="fgReset">清空重填</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data" id="fengongTable">
+        <thead><tr><th class="c">序号</th><th>姓名</th><th>学号</th><th>负责内容</th></tr></thead>
+        <tbody>
+          <tr><td class="c">1</td><td contenteditable="true" class="fill" data-k="n1"></td><td contenteditable="true" class="fill" data-k="s1"></td><td contenteditable="true" class="fill wide" data-k="t1"></td></tr>
+          <tr><td class="c">2</td><td contenteditable="true" class="fill" data-k="n2"></td><td contenteditable="true" class="fill" data-k="s2"></td><td contenteditable="true" class="fill wide" data-k="t2"></td></tr>
+          <tr><td class="c">3</td><td contenteditable="true" class="fill" data-k="n3"></td><td contenteditable="true" class="fill" data-k="s3"></td><td contenteditable="true" class="fill wide" data-k="t3"></td></tr>
+          <tr><td class="c">4</td><td contenteditable="true" class="fill" data-k="n4"></td><td contenteditable="true" class="fill" data-k="s4"></td><td contenteditable="true" class="fill wide" data-k="t4"></td></tr>
+          <tr><td class="c">5</td><td contenteditable="true" class="fill" data-k="n5"></td><td contenteditable="true" class="fill" data-k="s5"></td><td contenteditable="true" class="fill wide" data-k="t5"></td></tr>
+          <tr><td class="c">6</td><td contenteditable="true" class="fill" data-k="n6"></td><td contenteditable="true" class="fill" data-k="s6"></td><td contenteditable="true" class="fill wide" data-k="t6"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12.5px;color:var(--muted);margin:10px 0 0">
+      提示：填写内容保存在当前浏览器的本地存储中，仅对填写人自己的浏览器生效；如需在他人电脑上也显示，请填写完成后告诉我，可将内容固化进网页。
+    </p>
+  </section>
+  <style>
+    td.fill { min-width: 90px; cursor: text; }
+    td.fill:empty::before { content: "点击填写"; color: #b6bcc6; font-size: 13px; }
+    td.fill:focus { outline: 2px solid var(--accent, #4f7cff); outline-offset: -2px; background: #f7f9ff; }
+  </style>
+  <script>
+  (function () {
+    var KEY = "testhub_fengong";
+    var cells = document.querySelectorAll("#fengongTable td.fill");
+    try {
+      var saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+      cells.forEach(function (c) { if (saved[c.dataset.k]) c.textContent = saved[c.dataset.k]; });
+    } catch (e) {}
+    function save() {
+      var data = {};
+      cells.forEach(function (c) { data[c.dataset.k] = c.textContent.trim(); });
+      localStorage.setItem(KEY, JSON.stringify(data));
+    }
+    cells.forEach(function (c) {
+      c.addEventListener("blur", save);
+      c.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); c.blur(); } });
+    });
+    document.getElementById("fgSave").addEventListener("click", function () { save(); this.textContent = "已保存 ✓"; var b = this; setTimeout(function () { b.textContent = "保存"; }, 1200); });
+    document.getElementById("fgReset").addEventListener("click", function () {
+      if (!confirm("确定清空所有已填写的内容（姓名、学号、负责内容）？")) return;
+      cells.forEach(function (c) { c.textContent = ""; });
+      localStorage.removeItem(KEY);
+    });
+  })();
+  </script>
+
+  <section class="section">
+    <div class="callout warn">
+      <b>测试合规声明：</b>平台中所有测试均在公开页面上开展，未登录真实账号、未提交真实业务数据、未绕过任何风控或验证码；
+      性能测试并发量级控制在 200 以内，测试前已确认不对被测站点造成异常影响。截图、报告与日志均来自本组真实执行过程。
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <div>TestHub · 自动化测试一体化平台　|　《软件质量保证与测试》课程作业 · 第五组</div>
+    <div><a href="index.html">返回首页</a></div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/console.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/sidebar.js"></script>
+</body>
+</html>

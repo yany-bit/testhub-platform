@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TestHub · 自动化测试一体化平台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/console.css">
+<link rel="stylesheet" href="assets/css/sidebar.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="index.html">
+      <span class="logo-mark">T</span>
+      <span>TestHub<small>一体化测试平台</small></span>
+    </a>
+    <div class="nav-search">
+      <input id="globalSearch" type="text" placeholder="搜索用例 / 工具 / 指标…" autocomplete="off">
+      <div class="search-pop" id="searchPop"></div>
+    </div>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="ui.html">界面测试</a>
+      <a href="api.html">接口测试</a>
+      <a href="performance.html">性能测试</a>
+      <a href="ai.html">智能用例</a>
+      <a href="tools.html">工具中心</a>
+      <a href="about.html">联系我们</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <span class="eyebrow">《软件质量保证与测试》课程实践 · 第五组</span>
+    <h1>自动化测试<span>一体化平台</span></h1>
+    <p class="lead">
+      把界面测试、接口测试、性能测试与大模型辅助用例生成放在同一条流程里：统一设计用例、统一执行取证、统一汇总对比。
+      平台集成 Katalon Studio、Apifox、Bruno、JMeter、Locust、AngusTester 六款工具，覆盖 5 个真实站点与 1 个公开接口服务。
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#projects">查看测试项目 →</a>
+      <a class="btn btn-ghost" href="about.html">平台说明</a>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="stats">
+      <div class="stat"><div class="k">集成测试工具</div><div class="v">6<small>款</small></div><div class="d">界面 / 接口 / 性能 / AI</div></div>
+      <div class="stat"><div class="k">被测站点与接口</div><div class="v">5<small>+1</small></div><div class="d">京东、百度、腾讯网、腾讯视频、芒果TV</div></div>
+      <div class="stat"><div class="k">用例与断言</div><div class="v">114<small>条</small></div><div class="d">全部人工设计 + AI 辅助生成</div></div>
+      <div class="stat"><div class="k">取证截图</div><div class="v">95<small>张</small></div><div class="d">每条结论均有截图可复核</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>测试能力</h2>
+        <p>四类测试能力对应四种典型质量风险，按“能看得见 → 数据对不对 → 扛不扛得住 → 用例写不写得全”逐层覆盖</p>
+      </div>
+    </div>
+
+    <div class="modules">
+      <div class="module" style="--accent:#2f80ed;--accent-soft:#eaf2fb">
+        <div class="ico">⚡</div>
+        <h3>性能测试</h3>
+        <div class="tool">Apache JMeter · Locust</div>
+        <p>多档并发加压，采集响应时间、吞吐量与异常率，定位性能拐点并对比同类网站。</p>
+        <div class="metric"><b>13</b><span>组负载场景</span><span class="badge ok">0% 失败</span></div>
+        <div class="module-actions">
+          <a class="btn btn-sm btn-primary" href="performance.html">进入模块</a>
+          <a class="btn btn-sm btn-ghost" href="https://jmeter.apache.org/download_jmeter.cgi" target="_blank" rel="noopener">下载 JMeter</a>
+          <a class="btn btn-sm btn-ghost" href="https://locust.io/" target="_blank" rel="noopener">下载 Locust</a>
+        </div>
+      </div>
+
+      <div class="module" style="--accent:#7c3aed;--accent-soft:#f2ecfd">
+        <div class="ico">🔌</div>
+        <h3>接口测试</h3>
+        <div class="tool">Apifox · Bruno</div>
+        <p>绕过前端直接验证 RESTful 接口的增删改查、断言与异常响应，两款工具同接口对照。</p>
+        <div class="metric"><b>13</b><span>条用例</span><span class="badge ok">100% 通过</span></div>
+        <div class="module-actions">
+          <a class="btn btn-sm btn-primary" href="api.html">进入模块</a>
+          <a class="btn btn-sm btn-ghost" href="https://apifox.com/" target="_blank" rel="noopener">下载 Apifox</a>
+          <a class="btn btn-sm btn-ghost" href="https://www.usebruno.com/downloads" target="_blank" rel="noopener">下载 Bruno</a>
+        </div>
+      </div>
+
+      <div class="module" style="--accent:#0d9488;--accent-soft:#e6f6f3">
+        <div class="ico">🖥️</div>
+        <h3>界面测试</h3>
+        <div class="tool">Katalon Studio</div>
+        <p>5 个页面、6 个分组、75 条硬断言，覆盖环境、导航、表单、链接与响应式布局。</p>
+        <div class="metric"><b>75</b><span>条断言</span><span class="badge ok">全部 PASS</span></div>
+        <div class="module-actions">
+          <a class="btn btn-sm btn-primary" href="ui.html">进入模块</a>
+          <a class="btn btn-sm btn-ghost" href="https://katalon.com/download" target="_blank" rel="noopener">下载 Katalon</a>
+        </div>
+      </div>
+
+      <div class="module" style="--accent:#d97706;--accent-soft:#fdf3e3">
+        <div class="ico">🤖</div>
+        <h3>智能用例生成</h3>
+        <div class="tool">AngusTester · DeepSeek</div>
+        <p>用一句中文提示词让大模型生成规范用例，再交由浏览器自动化引擎逐条执行取证。</p>
+        <div class="metric"><b>8</b><span>条 AI 用例</span><span class="badge warn">1 个缺陷</span></div>
+        <div class="module-actions">
+          <a class="btn btn-sm btn-primary" href="ai.html">进入模块</a>
+          <a class="btn btn-sm btn-ghost" href="https://gm.anguskit.com/" target="_blank" rel="noopener">登录 AngusTester</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="section-head">
+      <div>
+        <h2>软件测试项目</h2>
+        <p>本组六位成员各自负责的项目，点击“查看详情”可进入对应模块</p>
+      </div>
+      <span class="more" style="color:var(--muted)">共 6 个项目 · 全部已归档</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>项目名称</th><th>类型</th><th>测试工具</th><th>被测对象</th>
+            <th class="c">规模</th><th class="c">结果</th><th class="c">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="strong">京东 Web 全量界面测试</td>
+            <td><span class="badge info">界面</span></td>
+            <td>Katalon Studio 11.7.0</td>
+            <td>京东（首页 / 登录页 / 帮助中心等 5 个页面）</td>
+            <td class="c">6 组 75 项</td>
+            <td class="c"><span class="badge ok">75/75 PASS</span></td>
+            <td class="c"><a href="ui.html">查看详情</a></td>
+          </tr>
+          <tr>
+            <td class="strong">腾讯网首页性能测试（Locust）</td>
+            <td><span class="badge info">性能</span></td>
+            <td>Locust 2.x / Python 3.x</td>
+            <td>腾讯网首页 qq.com</td>
+            <td class="c">5 组负载</td>
+            <td class="c"><span class="badge ok">9,556 请求 0 失败</span></td>
+            <td class="c"><a href="performance.html">查看详情</a></td>
+          </tr>
+          <tr>
+            <td class="strong">腾讯网首页同站性能测试（JMeter）</td>
+            <td><span class="badge info">性能</span></td>
+            <td>Apache JMeter 5.6.3</td>
+            <td>腾讯网首页 qq.com</td>
+            <td class="c">4 档 + 瞬时加压</td>
+            <td class="c"><span class="badge ok">0% 异常</span></td>
+            <td class="c"><a href="performance.html">查看详情</a></td>
+          </tr>
+          <tr>
+            <td class="strong">腾讯视频与芒果TV 性能对比</td>
+            <td><span class="badge info">性能</span></td>
+            <td>Apache JMeter 5.6.3</td>
+            <td>v.qq.com / mgtv.com</td>
+            <td class="c">2 站 × 4 档</td>
+            <td class="c"><span class="badge ok">0% 异常</span></td>
+            <td class="c"><a href="performance.html">查看详情</a></td>
+          </tr>
+          <tr>
+            <td class="strong">JSONPlaceholder 接口功能测试</td>
+            <td><span class="badge info">接口</span></td>
+            <td>Apifox / Bruno 4.3.0</td>
+            <td>posts、users 接口</td>
+            <td class="c">13 条用例</td>
+            <td class="c"><span class="badge ok">100% 通过</span></td>
+            <td class="c"><a href="api.html">查看详情</a></td>
+          </tr>
+          <tr>
+            <td class="strong">百度首页 AI 用例测试</td>
+            <td><span class="badge info">智能</span></td>
+            <td>AngusTester（DeepSeek V4 Flash）</td>
+            <td>百度首页 baidu.com</td>
+            <td class="c">8 条用例</td>
+            <td class="c"><span class="badge warn">3 通过 · 1 缺陷</span></td>
+            <td class="c"><a href="ai.html">查看详情</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>一体化测试流程</h2>
+        <p>六项测试共用同一条流程，保证结论可比、证据可查</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step"><h5>目标与预探测</h5><p>明确被测对象与指标，先用独立脚本探测站点边界与风控限制。</p></div>
+      <div class="step"><h5>用例设计</h5><p>AI 生成初稿 + 人工评审，统一到“步骤—预期—判定”格式。</p></div>
+      <div class="step"><h5>环境与脚本</h5><p>对齐浏览器、网络与并发参数，脚本先预跑再正式执行。</p></div>
+      <div class="step"><h5>执行与取证</h5><p>逐条截图、保存聚合报告与断言结果，失败项记录根因。</p></div>
+      <div class="step"><h5>汇总与归档</h5><p>同站/同类横向对比，输出测试报告与缺陷清单。</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="grid-2">
+      <div class="card card-pad">
+        <h3 style="margin:0 0 8px;font-size:16px">平台能力</h3>
+        <ul class="list">
+          <li>统一入口管理界面、接口、性能、智能用例四类测试项目</li>
+          <li>执行记录按项目归档，保留截图、报告、日志三级证据</li>
+          <li>支持同类工具横向对比（JMeter ↔ Locust、Apifox ↔ Bruno）</li>
+          <li>支持同类网站横向对比（腾讯视频 ↔ 芒果TV）</li>
+          <li>AI 辅助用例生成，缩短回归用例设计时间约七成</li>
+        </ul>
+      </div>
+      <div class="callout warn">
+        <b>⚠ 测试安全边界（全组统一遵守）</b>
+        <ul>
+          <li>只访问公开页面与公开接口，不登录真实账号、不提交真实业务数据、不下单</li>
+          <li>并发量级控制在课程实验范围内（最高 200 并发），避免对被测站点造成冲击</li>
+          <li>遇到风控验证码、403 限流立即停止，不尝试绕过或破解</li>
+          <li>对比测试同一时段背靠背执行，测试前关闭占用带宽的程序，保证数据可比</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <div>TestHub · 自动化测试一体化平台　|　《软件质量保证与测试》课程作业 · 第五组</div>
+    <div>数据来源：本组 6 份测试报告　|　所有截图均为实测取证　|　<a href="about.html">关于平台</a></div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/console.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/sidebar.js"></script>
+</body>
+</html>

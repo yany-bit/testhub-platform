@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>接口测试 · TestHub 一体化测试平台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/console.css">
+<link rel="stylesheet" href="assets/css/sidebar.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="index.html"><span class="logo-mark">T</span><span>TestHub<small>一体化测试平台</small></span></a>
+    <div class="nav-search">
+      <input id="globalSearch" type="text" placeholder="搜索用例 / 工具 / 指标…" autocomplete="off">
+      <div class="search-pop" id="searchPop"></div>
+    </div>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="ui.html">界面测试</a>
+      <a href="api.html">接口测试</a>
+      <a href="performance.html">性能测试</a>
+      <a href="ai.html">智能用例</a>
+      <a href="tools.html">工具中心</a>
+      <a href="about.html">联系我们</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap inner">
+    <div class="crumb"><a href="index.html">首页</a> / 接口测试</div>
+    <h1>接口测试</h1>
+    <p class="desc">
+      由两名成员分别使用 Apifox 与 Bruno 对同一公开教学接口服务 JSONPlaceholder 开展功能测试，覆盖增删改查、断言校验、异常响应与参数联动，
+      既完整实践了两款工具，也形成了“同一接口、不同工具”的天然对照样本。
+    </p>
+    <div class="chips">
+      <span class="chip">Apifox</span>
+      <span class="chip">Bruno v4.3.0</span>
+      <span class="chip">jsonplaceholder.typicode.com</span>
+      <span class="chip">13 条用例</span>
+      <span class="chip">100% 达到预期</span>
+    </div>
+    <div class="tool-links">
+      <span class="tl-label">工具入口：</span>
+      <a href="https://apifox.com/" target="_blank" rel="noopener">Apifox 官网 ↗</a>
+      <a href="https://www.usebruno.com/" target="_blank" rel="noopener">Bruno 官网 ↗</a>
+      <a href="https://jsonplaceholder.typicode.com/" target="_blank" rel="noopener">JSONPlaceholder 接口 ↗</a>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="console" id="apiTester">
+      <h3>⚡ 在线接口测试台</h3>
+      <p class="sub">选择请求方法与接口地址（或用例回放），点击「发送」即向 JSONPlaceholder 发起真实请求，实时返回状态码、耗时与响应体；历史记录保存在本机浏览器。</p>
+      <div class="ctl-row">
+        <label>用例回放</label>
+        <select id="atReplay">
+          <option value="">— 选择本组用例直接执行 —</option>
+          <optgroup label="Apifox（8 条）">
+            <option value="apifox:0">AF-1 查询全部帖子</option>
+            <option value="apifox:1">AF-2 查询单条帖子 id=1</option>
+            <option value="apifox:2">AF-3 新增帖子</option>
+            <option value="apifox:3">AF-4 修改帖子 id=1</option>
+            <option value="apifox:4">AF-5 删除帖子 id=1</option>
+            <option value="apifox:5">AF-6 断言校验</option>
+            <option value="apifox:7">AF-8 自动化场景</option>
+          </optgroup>
+          <optgroup label="Bruno（5 条）">
+            <option value="bruno:0">BR-01 基本查询</option>
+            <option value="bruno:1">BR-02 Assert 断言</option>
+            <option value="bruno:2">BR-03 Tests 脚本断言</option>
+            <option value="bruno:3">BR-04 异常用例 404</option>
+            <option value="bruno:4">BR-05 Params 联动</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="ctl-row">
+        <label>方法</label>
+        <select id="atMethod">
+          <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>
+        </select>
+        <label>预设地址</label>
+        <select id="atPreset">
+          <option value="https://jsonplaceholder.typicode.com/posts">GET /posts（全部帖子）</option>
+          <option value="https://jsonplaceholder.typicode.com/posts/1">GET /posts/1</option>
+          <option value="https://jsonplaceholder.typicode.com/users">GET /users</option>
+          <option value="https://jsonplaceholder.typicode.com/users/1">GET /users/1</option>
+          <option value="https://jsonplaceholder.typicode.com/posts?userId=2&_limit=3">GET /posts?userId=2&amp;_limit=3</option>
+          <option value="custom">— 自定义 URL —</option>
+        </select>
+        <input id="atUrl" class="grow" type="text" value="https://jsonplaceholder.typicode.com/posts/1" placeholder="https://…">
+        <button id="atSend" class="btn btn-sm btn-primary">发 送</button>
+      </div>
+      <div class="ctl-row" id="atBodyRow">
+        <textarea id="atBody" placeholder='POST/PUT 请求体（JSON），如：{"title":"x","body":"y","userId":1}'></textarea>
+      </div>
+      <div class="kv">
+        <div class="kv-i"><span class="kv-k">状态码</span><span class="kv-v" id="atStatus">—</span></div>
+        <div class="kv-i"><span class="kv-k">耗时</span><span class="kv-v" id="atTime">—</span></div>
+        <div class="kv-i"><span class="kv-k">响应大小</span><span class="kv-v" id="atSize">—</span></div>
+        <div class="kv-i" id="atCaseInfo" style="display:none;flex:1 1 100%"></div>
+      </div>
+      <div class="resp-box" id="atResp">// 点击「发送」或选择上方用例，这里会显示真实响应 JSON</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+        <b style="font-size:13px">历史记录</b>
+        <button id="atClear" class="mini">清空历史</button>
+      </div>
+      <ul class="hist-list" id="atHist"></ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="stats">
+      <div class="stat"><div class="k">测试用例</div><div class="v">13<small>条</small></div><div class="d">Apifox 8 条 + Bruno 5 条</div></div>
+      <div class="stat"><div class="k">用例通过率</div><div class="v">100<small>%</small></div><div class="d">含 1 条反向用例</div></div>
+      <div class="stat"><div class="k">接口资源</div><div class="v">2<small>类</small></div><div class="d">posts 帖子 / users 用户</div></div>
+      <div class="stat"><div class="k">断言方式</div><div class="v">3<small>种</small></div><div class="d">图形化断言 / 声明式表格 / JS 脚本</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>Apifox · 8 条用例</h2>
+        <p>项目：jsonplaceholder 接口练习　|　全部在快捷请求中完成，最后一个用例升级为自动化场景</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th class="c">用例</th><th>请求方式与地址</th><th>操作要点</th><th>预期与实际结果</th><th class="c">判定</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c">1</td><td>GET /posts</td><td>Params、Headers、Body 均不填写，直接发送</td><td>200 OK，返回 100 条帖子的 JSON 数组，每条含 userId、id、title、body</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">2</td><td>GET /posts/1</td><td>无额外参数，直接发送</td><td>200 OK，返回 id=1 的单条帖子对象，字段完整</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">3</td><td>POST /posts</td><td>Body 选 JSON，填入新帖标题、内容与 userId</td><td>201 Created，返回带自动生成 id 的 JSON，模拟新增成功</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">4</td><td>PUT /posts/1</td><td>Body 选 JSON，填入修改后的标题与内容</td><td>200 OK，返回更新后的帖子数据，模拟整体替换</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">5</td><td>DELETE /posts/1</td><td>无 Body，直接发送</td><td>200 OK，返回空对象 {}，模拟删除成功</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">6</td><td>GET /posts/1</td><td>后置操作添加断言：状态码=200、返回 id=1</td><td>两条断言全部通过，无需人工肉眼对比结果</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">7</td><td>GET /posts/1</td><td>对比 Pretty / Raw 展示；控制台查看完整报文</td><td>Pretty 模式自动缩进高亮；控制台可查完整请求头与响应头</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">8</td><td>自动化场景</td><td>保存接口后新建场景，添加步骤并一键运行</td><td>自动发起请求并执行内置断言，生成自动化测试报告</td><td class="c"><span class="badge ok">通过</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="shots" style="margin-top:18px">
+      <figure class="shot">
+        <img src="assets/img/api-apifox.png" alt="Apifox POST 新增帖子">
+        <figcaption><b>POST 新增帖子：</b>Body 以 JSON 提交，响应 201 Created 并返回自动生成的 id，说明创建语义正确。</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/img/api-apifox-auto.png" alt="Apifox 自动化测试报告">
+        <figcaption><b>自动化场景运行结果：</b>一键执行请求与断言并输出报告，是批量回归测试的基础能力。</figcaption>
+      </figure>
+    </div>
+
+    <div class="callout" style="margin-top:18px">
+      <b>需要说明：</b>JSONPlaceholder 是模拟接口，POST / PUT / DELETE 不会真正写入服务器数据，因此用例判定的是“接口语义与响应结构是否正确”，而不是数据持久化结果。
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>Bruno · 5 条用例</h2>
+        <p>离线优先的桌面工具，集合以本地纯文本 YAML 保存；采用“正常用例 + 反向用例”双线验证断言能力</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th class="c">用例</th><th>请求地址与方法</th><th>测试点</th><th>实际结果</th><th class="c">判定</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="c">TC-01</td><td>GET /users/1</td><td>基本查询与响应读取</td><td>200 OK，769 ms，509 B，字段与预期一致</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">TC-02</td><td>GET /users/1 + Assert</td><td>不写代码的状态码校验</td><td>Assertions (1) Passed: 1 Failed: 0，绿色</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">TC-03</td><td>GET /users/1 + Tests</td><td>JavaScript 脚本校验</td><td>Tests (1) Passed: 1 Failed: 0，与声明式断言分块独立计数</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">TC-04</td><td>GET /users/9999</td><td>异常（反向）用例</td><td>404 Not Found，3.15 s，2 B；两区块各 Failed: 1，提示 expected 404 to equal 200</td><td class="c"><span class="badge ok">通过</span></td></tr>
+          <tr><td class="c">TC-05</td><td>GET /posts?userId=2&amp;_limit=3</td><td>Params 参数与 URL 联动</td><td>200 OK，670 ms，892 B，3 条数据 userId 均为 2</td><td class="c"><span class="badge ok">通过</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-2-1" style="margin-top:18px">
+      <figure class="shot">
+        <img src="assets/img/api-bruno.png" alt="Bruno 双断言全绿">
+        <figcaption><b>双断言判定结果：</b>左侧 Tests 脚本、右侧响应面板分块显示 Tests 与 Assertions 的通过/失败数，两条断言互不覆盖。</figcaption>
+      </figure>
+      <div>
+        <div class="chart-card">
+          <h4>同一接口的五次耗时观测</h4>
+          <div class="sub">单位 ms · 状态码与响应体大小始终不变</div>
+          <div class="chart" id="chart-latency"></div>
+        </div>
+        <div class="callout warn" style="margin-top:14px">
+          <b>由此得到一条断言设计经验：</b>同一接口耗时从 769 ms 波动到 13.06 s，但状态码与响应体大小稳定不变。
+          断言应针对稳定的功能特征（状态码、字段值、数据条数）编写，不宜设置过短的响应时间阈值，否则网络抖动会造成误报。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2>同接口工具对比：Apifox 与 Bruno</h2>
+        <p>核心断言能力等价，差异集中在工程化定位</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>对比维度</th><th>Apifox</th><th>Bruno</th></tr></thead>
+        <tbody>
+          <tr><td class="strong">安装与登录</td><td>需注册账号登录，依赖联网</td><td>离线优先，无需注册登录</td></tr>
+          <tr><td class="strong">用例组织</td><td>云端项目 + 接口 + 自动化场景</td><td>本地纯文本 YAML 集合，Git 友好</td></tr>
+          <tr><td class="strong">断言方式</td><td>图形化“后置操作”断言，零代码</td><td>Assert 声明式表格 + Tests 脚本双方式</td></tr>
+          <tr><td class="strong">异常用例</td><td>通过状态码断言验证</td><td>TC-04 反向用例验证断言报错能力</td></tr>
+          <tr><td class="strong">自动化能力</td><td>内置自动化场景，一键运行出报告</td><td>无内置场景编排，需 CLI / 外部 CI 配合</td></tr>
+          <tr><td class="strong">报文可见性</td><td>控制台查看完整请求/响应报文</td><td>状态行给出状态码、耗时、响应大小</td></tr>
+          <tr><td class="strong">适用场景</td><td>团队协作、接口文档一体化、快速上手</td><td>个人与脚本化管理、版本控制、离线环境</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout ok" style="margin-top:18px">
+      <b>结论：</b>两款工具在接口功能验证这一核心能力上都能胜任，同一接口的正常请求、断言校验与异常判别均准确执行。
+      差异在于定位——Apifox 走“一体化协作平台”路线，调试、文档、Mock、自动化测试在同一软件内完成，对新手友好；
+      Bruno 走“轻量本地工具”路线，纯文本存储与离线优先使其天然适合纳入 Git 管理。
+      实际项目中可按团队规模与协作方式选择，两者也可以并存：Apifox 做协作与文档，Bruno 做脚本化回归资产。
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <div>TestHub · 自动化测试一体化平台　|　《软件质量保证与测试》课程作业 · 第五组</div>
+    <div><a href="performance.html">← 上一模块：性能测试</a>　|　<a href="ui.html">下一模块：界面测试 →</a></div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/console.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+barChart("#chart-latency", {
+  labels: ["首次 GET", "添加断言后", "双断言通过", "404 反向", "Params 用例"],
+  values: [769, 13060, 1070, 3150, 670],
+  unit: " ms",
+  colors: ["#2f80ed", "#dc2626", "#2f80ed", "#d97706", "#0d9488"]
+});
+</script>
+<script src="assets/js/sidebar.js"></script>
+</body>
+</html>
