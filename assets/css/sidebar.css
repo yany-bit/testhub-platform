@@ -47,6 +47,8 @@ section.section.collapsed .sec-toggle::after{transform:translateY(-50%) rotate(-
 .sec-toggle:hover h2{color:#2f80ed}
 
 @media(min-width:1100px){
-  .th-page{transition:margin-left .22s ease}
-  body.sb-open .th-page{margin-left:236px}
+  /* 桌面端：侧边栏固定常驻，不再抽屉拉出 */
+  .th-sidebar{transform:none!important;box-shadow:none}
+  .th-page{margin-left:236px;transition:margin-left .22s ease}
+  .th-mask,.th-hamb{display:none!important}
 }
