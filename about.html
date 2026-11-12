@@ -147,7 +147,7 @@
     /* 云端存储：GitHub 仓库 testhub-data（读公开接口；写需细粒度令牌，仅限该数据仓库） */
     var GH_REPO = "yany-bit/testhub-data";
     var GH_FILE = "fengong.json";
-    var GH_TOKEN = ""; /* 细粒度 PAT（仅授权 testhub-data 的 Contents 读写），由部署者填入 */
+    var GH_TOKEN = "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"; /* 细粒度 PAT：仅授权 testhub-data 的 Contents 读写，已验证无法写主站仓库 */
     var GH_API = "https://api.github.com/repos/" + GH_REPO + "/contents/" + GH_FILE + "?ref=main";
     var GH_RAW = "https://raw.githubusercontent.com/" + GH_REPO + "/main/" + GH_FILE;
 
