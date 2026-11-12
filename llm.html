@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM 单测生成 · TestHub 一体化测试平台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/console.css">
+<link rel="stylesheet" href="assets/css/sidebar.css">
+<style>
+  .llm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:900px){.llm-grid{grid-template-columns:1fr}}
+  .llm-pane{background:#0d1b2e;border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+  .llm-pane .pane-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#13253c;color:#9fb6cf;font-size:12.5px;border-bottom:1px solid rgba(255,255,255,.07)}
+  .llm-pane .pane-head b{color:#e8f1fb;font-size:12.5px}
+  .llm-pane .pane-head .dot{color:#56ccf2}
+  .llm-pane textarea{width:100%;min-height:330px;box-sizing:border-box;border:0;outline:none;resize:vertical;
+    background:transparent;color:#d7e6f7;font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:13px;line-height:1.65;padding:14px 16px}
+  .llm-pane pre{margin:0;min-height:330px;max-height:520px;overflow:auto;color:#d7e6f7;
+    font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:13px;line-height:1.65;padding:14px 16px;white-space:pre-wrap;word-break:break-word}
+  .llm-pane pre .kw{color:#7ee787}
+  .llm-pane pre .st{color:#f2cc60}
+  .llm-pane pre .fn{color:#79c0ff}
+  .llm-pane pre .cm{color:#7d8fa3;font-style:italic}
+  .llm-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+  .llm-status{font-size:12.5px;color:var(--muted);margin:10px 0 0;min-height:18px}
+  .llm-status.ok{color:#1a9c5d}
+  .llm-status.err{color:#d64545}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="index.html"><span class="logo-mark">T</span><span>TestHub<small>一体化测试平台</small></span></a>
+    <div class="nav-search">
+      <input id="globalSearch" type="text" placeholder="搜索用例 / 工具 / 指标…" autocomplete="off">
+      <div class="search-pop" id="searchPop"></div>
+    </div>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="ui.html">界面测试</a>
+      <a href="api.html">接口测试</a>
+      <a href="performance.html">性能测试</a>
+      <a href="ai.html">智能用例</a>
+      <a href="llm.html">LLM 单测</a>
+      <a href="tools.html">工具中心</a>
+      <a href="about.html">联系我们</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap inner">
+    <div class="crumb"><a href="index.html">首页</a> / LLM 单测生成</div>
+    <h1>LLM 从源代码直接生成单元测试</h1>
+    <p class="desc">
+      把被测函数的源代码交给大模型，自动产出覆盖正常路径与异常路径的 pytest 单元测试：
+      正常折扣计算、零价格异常、未知等级异常一个不落。左侧粘贴被测函数，点击生成，右侧得到测试代码，可直接导出运行。
+    </p>
+    <div class="chips">
+      <span class="chip">源代码 → 单元测试</span>
+      <span class="chip">pytest 风格</span>
+      <span class="chip">正常路径 + 异常路径</span>
+      <span class="chip">一键导出 .py</span>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="section-head">
+      <div><h2>🧪 在线生成器</h2><p>左侧输入被测函数（Python），点击“生成单元测试”，右侧输出 pytest 测试代码</p></div>
+    </div>
+
+    <div class="llm-grid">
+      <div class="llm-pane">
+        <div class="pane-head"><span><span class="dot">●</span> 被测函数（输入给 LLM 的源码）</span><button class="btn btn-ghost btn-sm" id="llmExample">载入示例</button></div>
+        <textarea id="llmSrc" spellcheck="false"></textarea>
+      </div>
+      <div class="llm-pane">
+        <div class="pane-head"><b>LLM 自动生成的测试代码</b><span id="llmMeta">待生成</span></div>
+        <pre id="llmOut"><span class="cm">// 生成的测试代码将显示在这里</span></pre>
+      </div>
+    </div>
+
+    <div class="llm-toolbar">
+      <button class="btn btn-primary" id="llmGen">✨ 生成单元测试</button>
+      <button class="btn" id="llmCopy">复制代码</button>
+      <button class="btn" id="llmExport">导出 .py 文件</button>
+      <button class="btn btn-ghost" id="llmClear">清空</button>
+    </div>
+    <p class="llm-status" id="llmStatus">就绪。点击“载入示例”体验内置用例，或粘贴你自己的函数。</p>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div><h2>代码案例：一个折扣函数，LLM 自动生成了什么测试？</h2><p>核心方法 —— 以 calculate_discount 为例，LLM 覆盖了正常折扣计算、零价格异常、未知等级异常</p></div>
+    </div>
+    <div class="llm-grid">
+      <div class="llm-pane">
+        <div class="pane-head"><span>被测函数（输入给 LLM 的源码）</span></div>
+        <pre><span class="kw">def</span> <span class="fn">calculate_discount</span>(price, level):
+    <span class="kw">if</span> price &lt;= 0:
+        <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"价格必须大于0"</span>)
+    <span class="kw">if</span> level == <span class="st">"VIP"</span>:
+        <span class="kw">return</span> price * 0.8
+    <span class="kw">elif</span> level == <span class="st">"普通"</span>:
+        <span class="kw">return</span> price * 0.95
+    <span class="kw">else</span>:
+        <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"未知等级"</span>)</pre>
+      </div>
+      <div class="llm-pane">
+        <div class="pane-head"><b>LLM 自动生成的测试代码</b></div>
+        <pre><span class="kw">def</span> <span class="fn">test_vip_discount</span>():
+    <span class="kw">assert</span> calculate_discount(100, <span class="st">"VIP"</span>) == 80.0
+
+<span class="kw">def</span> <span class="fn">test_normal_discount</span>():
+    <span class="kw">assert</span> calculate_discount(200, <span class="st">"普通"</span>) == 190.0
+
+<span class="kw">def</span> <span class="fn">test_zero_price_error</span>():
+    <span class="kw">with</span> pytest.raises(ValueError):
+        calculate_discount(0, <span class="st">"VIP"</span>)
+
+<span class="kw">def</span> <span class="fn">test_unknown_level_error</span>():
+    <span class="kw">with</span> pytest.raises(ValueError):
+        calculate_discount(100, <span class="st">"钻石"</span>)</pre>
+      </div>
+    </div>
+    <p style="font-size:12.5px;color:var(--muted);margin:10px 0 0">
+      LLM 自动覆盖了：正常折扣计算、零价格异常、未知等级异常 —— 包含正常路径和异常路径的完整测试。
+    </p>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <div>TestHub · 自动化测试一体化平台　|　《软件质量保证与测试》课程作业 · 第五组</div>
+    <div><a href="index.html">返回首页</a></div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/console.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/sidebar.js"></script>
+<script>
+/* ---------- LLM 单测生成（本地模拟引擎） ---------- */
+(function () {
+  var EXAMPLE = [
+    "def calculate_discount(price, level):",
+    "    if price <= 0:",
+    '        raise ValueError("价格必须大于0")',
+    '    if level == "VIP":',
+    "        return price * 0.8",
+    '    elif level == "普通":',
+    "        return price * 0.95",
+    "    else:",
+    '        raise ValueError("未知等级")'
+  ].join("\n");
+
+  /* 示例函数的 canned 输出（与页面下方案例一致） */
+  var CANNED = [
+    "def test_vip_discount():",
+    '    assert calculate_discount(100, "VIP") == 80.0',
+    "",
+    "def test_normal_discount():",
+    '    assert calculate_discount(200, "普通") == 190.0',
+    "",
+    "def test_zero_price_error():",
+    "    with pytest.raises(ValueError):",
+    '        calculate_discount(0, "VIP")',
+    "",
+    "def test_unknown_level_error():",
+    "    with pytest.raises(ValueError):",
+    '        calculate_discount(100, "钻石")'
+  ].join("\n");
+
+  var src = document.getElementById("llmSrc");
+  var out = document.getElementById("llmOut");
+  var status = document.getElementById("llmStatus");
+  var meta = document.getElementById("llmMeta");
+
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function hl(code) {
+    return esc(code)
+      .replace(/^( *)(def |with |assert |raise |return |elif |else:|if )/gm, "$1<span class='kw'>$2</span>")
+      .replace(/(&quot;[^&]*?&quot;|"[^"]*")/g, "<span class='st'>$1</span>")
+      .replace(/\b(def|test_\w+)\b(?=\()/g, "<span class='fn'>$1</span>")
+      .replace(/(#.*)$/gm, "<span class='cm'>$1</span>");
+  }
+
+  function setStatus(t, cls) { status.textContent = t; status.className = "llm-status " + (cls || ""); }
+
+  /* ---- 本地模拟 LLM：分析源码结构，产出 pytest 用例 ---- */
+  function generate(code) {
+    if (/calculate_discount/.test(code)) {
+      return { code: CANNED, note: "命中内置示例：按案例基线输出 4 条用例（2 正常 + 2 异常）" };
+    }
+    var funcs = [];
+    var re = /def\s+(\w+)\s*\(([^)]*)\)\s*:/g, m;
+    while ((m = re.exec(code)) !== null) funcs.push({ name: m[1], params: m[2].trim() });
+    if (!funcs.length) return { error: "没有识别到 Python 函数（需要 def 函数名(参数): 形式）。" };
+
+    var lines = ["# 由 TestHub LLM 单测生成器（本地模拟引擎）自动生成", "# 覆盖策略：正常路径 + 参数边界 + 异常路径", "import pytest", ""];
+    var count = 0;
+    funcs.forEach(function (f) {
+      var args = f.params ? f.params.split(",").map(function (s) { return s.trim().split(/[:=]/)[0].trim(); }).filter(Boolean) : [];
+      var raises = [];
+      var raiseRe = /raise\s+(\w+)\s*\(\s*(['"])([^'"]*)\2/g;
+      while ((m = raiseRe.exec(code)) !== null) raises.push({ exc: m[1], msg: m[3] });
+      var returns = (code.match(/return\s+[^\n]+/g) || []).length;
+      var conds = (code.match(/\b(if|elif)\b[^\n:]+:/g) || []).map(function (s) { return s.trim(); });
+
+      var call = f.name + "(" + args.map(function () { return "..."; }).join(", ") + ")";
+
+      if (returns > 0) {
+        lines.push("def test_" + f.name + "_normal_path():");
+        lines.push("    # 正常路径：调用 " + f.name + " 并校验返回值（请按业务语义补全期望值）");
+        lines.push("    result = " + call.replace(/\.\.\./g, "<测试输入>"));
+        lines.push("    assert result is not None  # TODO: 替换为精确期望值", "");
+        count++;
+      }
+      raises.forEach(function (r, i) {
+        lines.push("def test_" + f.name + "_raises_" + r.exc.toLowerCase() + "_" + (i + 1) + "():");
+        lines.push('    # 异常路径：' + r.msg);
+        lines.push("    with pytest.raises(" + r.exc + "):");
+        lines.push("        " + call.replace(/\.\.\./g, "<触发" + r.exc + "的输入>"), "");
+        count++;
+      });
+      conds.slice(0, 4).forEach(function (c, i) {
+        lines.push("# 建议补充边界用例 " + (i + 1) + "：分支 " + c + " （等价类 / 边界值分析）");
+      });
+      if (!raises.length && !returns.length) {
+        lines.push("def test_" + f.name + "_smoke():");
+        lines.push("    # 冒烟测试：不抛异常即通过");
+        lines.push("    " + call.replace(/\.\.\./g, "<测试输入>"), "");
+        count++;
+      }
+    });
+    lines.push("", "# 共生成 " + count + " 条用例。把本文件与被测源码放在同一目录后运行：pytest -v");
+    return { code: lines.join("\n"), note: "本地模拟引擎生成 " + funcs.length + " 个函数 / " + count + " 条用例" };
+  }
+
+  document.getElementById("llmExample").addEventListener("click", function () {
+    src.value = EXAMPLE;
+    setStatus("已载入内置示例：折扣函数 calculate_discount。", "ok");
+  });
+
+  document.getElementById("llmGen").addEventListener("click", function () {
+    var code = src.value.trim();
+    if (!code) { setStatus("请先输入被测函数源代码。", "err"); return; }
+    setStatus("LLM 正在分析源码结构、设计用例…");
+    meta.textContent = "生成中…";
+    var btn = this; btn.disabled = true;
+    setTimeout(function () {
+      var r = generate(code);
+      btn.disabled = false;
+      if (r.error) { setStatus(r.error, "err"); meta.textContent = "失败"; return; }
+      out.innerHTML = hl(r.code);
+      meta.textContent = r.note;
+      setStatus("生成完成 ✓ " + r.note, "ok");
+    }, 900);
+  });
+
+  document.getElementById("llmCopy").addEventListener("click", function () {
+    var text = out.textContent || "";
+    if (!text.trim()) { setStatus("还没有可复制的内容，先生成一次。", "err"); return; }
+    navigator.clipboard.writeText(text).then(function () { setStatus("已复制到剪贴板 ✓", "ok"); });
+  });
+
+  document.getElementById("llmExport").addEventListener("click", function () {
+    var text = out.textContent || "";
+    if (!text.trim()) { setStatus("还没有可导出的内容，先生成一次。", "err"); return; }
+    var fnMatch = (src.value.match(/def\s+(\w+)/) || [null, "unit_test"]);
+    var blob = new Blob(["# -*- coding: utf-8 -*-\n" + text], { type: "text/x-python;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "test_" + fnMatch[1] + ".py";
+    document.body.appendChild(a); a.click(); a.remove();
+    setStatus("已导出 " + a.download + " ✓", "ok");
+  });
+
+  document.getElementById("llmClear").addEventListener("click", function () {
+    src.value = ""; out.innerHTML = "<span class='cm'>// 生成的测试代码将显示在这里</span>";
+    meta.textContent = "待生成"; setStatus("已清空。");
+  });
+
+  /* 初始预置示例，方便直接点生成体验 */
+  src.value = EXAMPLE;
+})();
+</script>
+</body>
+</html>

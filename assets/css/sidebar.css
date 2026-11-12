@@ -22,6 +22,22 @@ body.sb-open .th-mask{opacity:1;pointer-events:auto}
 .th-hamb span{display:block;width:17px;height:2px;border-radius:2px;background:#2c4a68}
 .th-hamb:hover{border-color:#2f80ed}
 
+/* ---------- 分组导航（大分类 + 子项） ---------- */
+.th-nav-item{position:relative;padding-right:30px}
+.th-nav-item .nt{flex:1}
+.th-nav-item .chev{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11px;color:#7f9ab5;
+  transition:transform .18s;padding:4px;line-height:1;cursor:pointer}
+.th-group .th-sub{display:none}
+.th-group.open .th-sub{display:block}
+.th-group.open .th-nav-item .chev{transform:translateY(-50%) rotate(180deg)}
+.th-group.cur-group{background:rgba(47,128,237,.10);border-radius:0 10px 10px 0}
+.th-sub{padding:2px 0 6px}
+.th-sub-item{display:block;padding:6px 18px 6px 46px;font-size:12.5px;color:#a9bdd2;text-decoration:none;line-height:1.4;
+  border-left:3px solid transparent}
+.th-sub-item:hover{color:#fff;background:rgba(255,255,255,.05)}
+.th-sub-item.active{color:#56ccf2;font-weight:700;border-left-color:#56ccf2}
+.th-sub-item::before{content:"·";margin-right:6px;color:#56ccf2;opacity:.7}
+
 /* ---------- 区块收起/展开 ---------- */
 .th-hidden{display:none!important}
 section.section.collapsed .sec-body{display:none}

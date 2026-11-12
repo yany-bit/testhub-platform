@@ -28,6 +28,7 @@
   SEARCH_INDEX.push({ title: "页面 · 接口测试", desc: "在线接口测试台与用例回放", url: "api.html" });
   SEARCH_INDEX.push({ title: "页面 · 界面测试", desc: "Katalon 断言分组查询", url: "ui.html" });
   SEARCH_INDEX.push({ title: "页面 · 智能用例", desc: "AI 用例生成模拟与 AngusTester 入口", url: "ai.html" });
+  SEARCH_INDEX.push({ title: "页面 · LLM 单测生成", desc: "从源代码直接生成 pytest 单元测试，可导出", url: "llm.html" });
   SEARCH_INDEX.push({ title: "页面 · 工具中心", desc: "全部测试工具直达入口", url: "tools.html" });
   SEARCH_INDEX.push({ title: "页面 · 联系我们", desc: "分工与合规声明", url: "about.html" });
 
