@@ -144,7 +144,59 @@
   <script>
   (function () {
     var KEY = "testhub_fengong_v3";
-    var CLOUD = "https://kvdb.io/DisrYPCNnQed1QPvCBhDaT/fengong";
+    /* 云端存储：GitHub 仓库 testhub-data（读公开接口；写需细粒度令牌，仅限该数据仓库） */
+    var GH_REPO = "yany-bit/testhub-data";
+    var GH_FILE = "fengong.json";
+    var GH_TOKEN = ""; /* 细粒度 PAT（仅授权 testhub-data 的 Contents 读写），由部署者填入 */
+    var GH_API = "https://api.github.com/repos/" + GH_REPO + "/contents/" + GH_FILE + "?ref=main";
+    var GH_RAW = "https://raw.githubusercontent.com/" + GH_REPO + "/main/" + GH_FILE;
+
+    function b64ToUtf8(b64) {
+      var bin = atob((b64 || "").replace(/\s/g, ""));
+      try {
+        return decodeURIComponent(Array.prototype.map.call(bin, function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(""));
+      } catch (e) { return bin; }
+    }
+    function utf8ToB64(s) { return btoa(unescape(encodeURIComponent(s))); }
+    var fileSha = null; /* 云端文件当前版本号，保存时用于更新 */
+    function ghHeaders() {
+      var h = { "Accept": "application/vnd.github+json", "Cache-Control": "no-store" };
+      if (GH_TOKEN) h["Authorization"] = "Bearer " + GH_TOKEN;
+      return h;
+    }
+    function cloudRead() {
+      return fetch(GH_API + "&t=" + Date.now(), { cache: "no-store", headers: ghHeaders() })
+        .then(function (r) {
+          if (!r.ok) throw new Error("api " + r.status);
+          return r.json();
+        })
+        .then(function (j) {
+          fileSha = j.sha;
+          return JSON.parse(b64ToUtf8(j.content));
+        })
+        .catch(function () {
+          return fetch(GH_RAW + "?t=" + Date.now(), { cache: "no-store" })
+            .then(function (r) { if (!r.ok) throw new Error("raw " + r.status); return r.json(); });
+        });
+    }
+    function cloudWrite(data) {
+      var body = {
+        message: "update 小组分工 " + new Date().toLocaleString(),
+        content: utf8ToB64(JSON.stringify(data, null, 2))
+      };
+      if (fileSha) body.sha = fileSha;
+      if (!GH_TOKEN) return Promise.reject(new Error("token 未配置"));
+      return fetch(GH_API, {
+        method: "PUT",
+        headers: ghHeaders(),
+        body: JSON.stringify(body)
+      }).then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      }).then(function (j) { fileSha = j.content && j.content.sha; });
+    }
     /* 答案仅以哈希形式存放，查看源代码无法直接得到答案 */
     var ANSWER_HASHES = ["3mw9p4", "1e029jj", "3mwav9"];
     function ansHash(s) {
@@ -182,14 +234,8 @@
     /* 内容优先级：云端数据 > 本地缓存 > 网页内置默认 */
     render(DEFAULTS);
     try { render(JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
-    fetch(CLOUD, { cache: "no-store" })
-      .then(function (r) { return r.ok ? r.text() : null; })
-      .then(function (t) {
-        if (!t) return;
-        var d = null;
-        try { d = JSON.parse(t); } catch (e) {}
-        if (d && d.n1) { render(d); }
-      })
+    cloudRead()
+      .then(function (d) { if (d && d.n1) render(d); })
       .catch(function () {});
 
     function setEditable(on) {
@@ -250,19 +296,18 @@
       requireGate(function () {
         var data = collect();
         saveBtn.disabled = true; saveBtn.textContent = "保存中…";
-        fetch(CLOUD, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        }).then(function (r) {
-          if (r.ok) {
-            localStorage.removeItem(KEY);
-            saveBtn.textContent = "已同步 ✓";
-            setTimeout(function () { saveBtn.textContent = "保存"; saveBtn.disabled = false; }, 1500);
-            alert("已保存并同步到云端！所有人打开或刷新本页面即可看到最新分工。");
-          } else {
-            throw new Error("HTTP " + r.status);
-          }
+        /* 保存前先取云端最新版本号，避免覆盖他人修改 */
+        var ensureSha = fileSha
+          ? Promise.resolve()
+          : fetch(GH_API + "&t=" + Date.now(), { cache: "no-store", headers: ghHeaders() })
+              .then(function (r) { if (r.ok) return r.json(); })
+              .then(function (j) { if (j && j.sha) fileSha = j.sha; })
+              .catch(function () {});
+        ensureSha.then(function () { return cloudWrite(data); }).then(function () {
+          localStorage.removeItem(KEY);
+          saveBtn.textContent = "已同步 ✓";
+          setTimeout(function () { saveBtn.textContent = "保存"; saveBtn.disabled = false; }, 1500);
+          alert("已保存并同步到云端！所有人打开或刷新本页面即可看到最新分工。");
         }).catch(function () {
           localStorage.setItem(KEY, JSON.stringify(data));
           saveBtn.textContent = "保存";
