@@ -145,7 +145,13 @@
   (function () {
     var KEY = "testhub_fengong_v3";
     var CLOUD = "https://kvdb.io/DisrYPCNnQed1QPvCBhDaT/fengong";
-    var ANSWERS = ["小布丁", "xiaobuding", "小布叮"];
+    /* 答案仅以哈希形式存放，查看源代码无法直接得到答案 */
+    var ANSWER_HASHES = ["3mw9p4", "1e029jj", "3mwav9"];
+    function ansHash(s) {
+      var x = 5381;
+      for (var i = 0; i < s.length; i++) { x = ((x << 5) + x + s.charCodeAt(i)) >>> 0; }
+      return x.toString(36);
+    }
     var DEFAULTS = {
       n1: "高陈洋", s1: "24090202116", t1: "AngusTester 大模型辅助生成测试用例百度功能测试",
       n2: "章雨倩", s2: "24090212115", t2: "JMeter 腾讯QQ/腾讯视频/芒果TV性能测试",
@@ -205,7 +211,7 @@
     }
     function tryAnswer() {
       var v = (gateInput.value || "").trim().toLowerCase();
-      if (ANSWERS.indexOf(v) >= 0) {
+      if (ANSWER_HASHES.indexOf(ansHash(v)) >= 0) {
         gate.style.display = "none";
         unlocked = true;
         sessionStorage.setItem("th_fg_unlock", "1");
