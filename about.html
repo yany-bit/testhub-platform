@@ -99,10 +99,11 @@
 
   <section class="section">
     <div class="section-head">
-      <div><h2>小组分工</h2><p>本表内容全站可见；如需修改，点击任意单元格并通过“星星验证”后即可编辑</p></div>
+      <div><h2>小组分工</h2><p>本表内容云端同步，所有访客可见；如需修改请点击右上角“修改”并通过身份验证</p></div>
       <div style="display:flex;gap:8px">
-        <button class="btn" id="fgSave">保存修改</button>
-        <button class="btn btn-ghost" id="fgReset">恢复默认</button>
+        <button class="btn" id="fgEdit">修改</button>
+        <button class="btn btn-ghost" id="fgReset">清空</button>
+        <button class="btn btn-primary" id="fgSave">保存</button>
       </div>
     </div>
     <div class="table-wrap">
@@ -118,16 +119,13 @@
         </tbody>
       </table>
     </div>
-    <p style="font-size:12.5px;color:var(--muted);margin:10px 0 0">
-      提示：表格默认展示已确认的分工，所有访客可见；点击单元格会先弹出验证问题（天上有多少颗星星？），答对“布吉岛”后本浏览器解锁编辑，修改仅保存在本地。
-    </p>
   </section>
 
   <!-- 分工编辑验证弹窗 -->
   <div id="fgGate" style="display:none;position:fixed;inset:0;background:rgba(10,20,32,.55);z-index:200;align-items:center;justify-content:center">
     <div style="background:#fff;border-radius:14px;max-width:360px;width:calc(100% - 40px);padding:22px 22px 18px;box-shadow:0 24px 60px rgba(8,20,35,.35)">
-      <h3 style="margin:0 0 6px;font-size:16px">🔐 修改验证</h3>
-      <p style="margin:0 0 12px;font-size:13.5px;color:#5a6b7e">天上有多少颗星星？</p>
+      <h3 style="margin:0 0 6px;font-size:16px">🔐 身份验证</h3>
+      <p style="margin:0 0 12px;font-size:13.5px;color:#5a6b7e">谁是大胃王？</p>
       <input id="fgGateInput" type="text" placeholder="请输入答案" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1px solid #d5dce5;border-radius:9px;font-size:14px" autocomplete="off">
       <p id="fgGateErr" style="display:none;margin:8px 0 0;font-size:12.5px;color:#d64545">回答不对哦，再想想～</p>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
@@ -145,7 +143,9 @@
   </style>
   <script>
   (function () {
-    var KEY = "testhub_fengong_v2";
+    var KEY = "testhub_fengong_v3";
+    var CLOUD = "https://kvdb.io/DisrYPCNnQed1QPvCBhDaT/fengong";
+    var ANSWERS = ["小布丁", "xiaobuding", "小布叮"];
     var DEFAULTS = {
       n1: "高陈洋", s1: "24090202116", t1: "AngusTester 大模型辅助生成测试用例百度功能测试",
       n2: "章雨倩", s2: "24090212115", t2: "JMeter 腾讯QQ/腾讯视频/芒果TV性能测试",
@@ -158,66 +158,122 @@
     var gate = document.getElementById("fgGate");
     var gateInput = document.getElementById("fgGateInput");
     var gateErr = document.getElementById("fgGateErr");
+    var unlocked = sessionStorage.getItem("th_fg_unlock") === "1";
+    var pendingAction = null;
 
-    /* 内容优先级：本地已保存的修改 > 网页内置默认值 */
-    try {
-      var saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    function collect() {
+      var data = {};
+      cells.forEach(function (c) { data[c.dataset.k] = c.textContent.trim(); });
+      return data;
+    }
+    function render(data) {
       cells.forEach(function (c) {
-        var v = saved[c.dataset.k];
-        c.textContent = (v !== undefined && v !== "") ? v : DEFAULTS[c.dataset.k] || "";
+        var v = data[c.dataset.k];
+        if (typeof v === "string" && v !== "") c.textContent = v;
       });
-    } catch (e) {}
-
-    function unlock() {
-      cells.forEach(function (c) { c.classList.add("unlocked"); c.setAttribute("contenteditable", "true"); });
     }
 
-    /* 验证关卡：未解锁时点击单元格 → 弹出星星问题 */
-    cells.forEach(function (c) {
-      c.addEventListener("click", function () {
-        if (c.classList.contains("unlocked")) return;
-        gate.style.display = "flex";
-        gateErr.style.display = "none";
-        gateInput.value = "";
-        setTimeout(function () { gateInput.focus(); }, 60);
+    /* 内容优先级：云端数据 > 本地缓存 > 网页内置默认 */
+    render(DEFAULTS);
+    try { render(JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+    fetch(CLOUD, { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : null; })
+      .then(function (t) {
+        if (!t) return;
+        var d = null;
+        try { d = JSON.parse(t); } catch (e) {}
+        if (d && d.n1) { render(d); }
+      })
+      .catch(function () {});
+
+    function setEditable(on) {
+      cells.forEach(function (c) {
+        c.classList.toggle("unlocked", on);
+        if (on) c.setAttribute("contenteditable", "true");
+        else c.removeAttribute("contenteditable");
       });
-    });
+    }
+
+    /* --- 验证关卡：所有写操作（修改/清空/保存）必须先通过 --- */
+    function requireGate(action) {
+      if (unlocked) { action(); return; }
+      pendingAction = action;
+      gate.style.display = "flex";
+      gateErr.style.display = "none";
+      gateInput.value = "";
+      setTimeout(function () { gateInput.focus(); }, 60);
+    }
     function tryAnswer() {
       var v = (gateInput.value || "").trim().toLowerCase();
-      if (v === "布吉岛" || v === "不知道" || v === "bujidao") {
+      if (ANSWERS.indexOf(v) >= 0) {
         gate.style.display = "none";
-        unlock();
+        unlocked = true;
         sessionStorage.setItem("th_fg_unlock", "1");
-        alert("验证通过！本浏览器已解锁编辑，点击单元格即可修改（仅本地生效）。");
+        var act = pendingAction; pendingAction = null;
+        if (act) act();
       } else {
         gateErr.style.display = "block";
         gateInput.select();
       }
     }
     document.getElementById("fgGateOk").addEventListener("click", tryAnswer);
-    document.getElementById("fgGateCancel").addEventListener("click", function () { gate.style.display = "none"; });
-    gateInput.addEventListener("keydown", function (e) { if (e.key === "Enter") tryAnswer(); });
-    if (sessionStorage.getItem("th_fg_unlock") === "1") unlock();
-
-    function save() {
-      var data = {};
-      cells.forEach(function (c) { data[c.dataset.k] = c.textContent.trim(); });
-      localStorage.setItem(KEY, JSON.stringify(data));
-    }
-    cells.forEach(function (c) {
-      c.addEventListener("blur", function () { if (c.classList.contains("unlocked")) save(); });
-      c.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); c.blur(); } });
+    document.getElementById("fgGateCancel").addEventListener("click", function () {
+      gate.style.display = "none"; pendingAction = null;
     });
-    document.getElementById("fgSave").addEventListener("click", function () { save(); this.textContent = "已保存 ✓"; var b = this; setTimeout(function () { b.textContent = "保存修改"; }, 1200); });
+    gateInput.addEventListener("keydown", function (e) { if (e.key === "Enter") tryAnswer(); });
+
+    /* --- 修改：验证后解锁编辑 --- */
+    document.getElementById("fgEdit").addEventListener("click", function () {
+      requireGate(function () {
+        setEditable(true);
+        alert("验证通过！现在可以点击单元格直接修改，改完请点击“保存”同步到云端。");
+      });
+    });
+
+    /* --- 清空：验证后清空表格内容（需再点保存才会同步） --- */
     document.getElementById("fgReset").addEventListener("click", function () {
-      if (sessionStorage.getItem("th_fg_unlock") !== "1") {
-        gate.style.display = "flex"; gateErr.style.display = "none"; gateInput.value = "";
-        setTimeout(function () { gateInput.focus(); }, 60);
-        return;
-      }
-      if (!confirm("确定恢复为网页默认分工内容？本地修改将被清除。")) return;
-      cells.forEach(function (c) { c.textContent = DEFAULTS[c.dataset.k] || ""; });
-      localStorage.removeItem(KEY);
+      requireGate(function () {
+        if (!confirm("确定清空表格全部内容？清空后请点击“保存”同步到云端。")) return;
+        cells.forEach(function (c) { c.textContent = ""; });
+      });
+    });
+
+    /* --- 保存：验证后写入云端，全站访客刷新即可看到 --- */
+    var saveBtn = document.getElementById("fgSave");
+    saveBtn.addEventListener("click", function () {
+      requireGate(function () {
+        var data = collect();
+        saveBtn.disabled = true; saveBtn.textContent = "保存中…";
+        fetch(CLOUD, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        }).then(function (r) {
+          if (r.ok) {
+            localStorage.removeItem(KEY);
+            saveBtn.textContent = "已同步 ✓";
+            setTimeout(function () { saveBtn.textContent = "保存"; saveBtn.disabled = false; }, 1500);
+            alert("已保存并同步到云端！所有人打开或刷新本页面即可看到最新分工。");
+          } else {
+            throw new Error("HTTP " + r.status);
+          }
+        }).catch(function () {
+          localStorage.setItem(KEY, JSON.stringify(data));
+          saveBtn.textContent = "保存";
+          saveBtn.disabled = false;
+          alert("云端暂时不可用，本次修改已保存在本浏览器。\n请稍后重试，或联系管理员检查云端存储状态。");
+        });
+      });
+    });
+
+    /* --- 编辑过程中：Enter 结束输入；失焦暂存本地（防丢） --- */
+    cells.forEach(function (c) {
+      c.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); c.blur(); } });
+      c.addEventListener("blur", function () {
+        if (c.classList.contains("unlocked")) {
+          try { localStorage.setItem(KEY, JSON.stringify(collect())); } catch (e) {}
+        }
+      });
     });
   })();
   </script>
