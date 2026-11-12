@@ -104,6 +104,7 @@
         <button class="btn" id="fgEdit">修改</button>
         <button class="btn btn-ghost" id="fgReset">清空</button>
         <button class="btn btn-primary" id="fgSave">保存</button>
+        <button class="btn btn-ghost" id="fgKey" title="设置/更换云端写入密钥（仅保存在本浏览器）">🔑</button>
       </div>
     </div>
     <div class="table-wrap">
@@ -134,6 +135,22 @@
       </div>
     </div>
   </div>
+  <div id="fgTokenDlg" style="display:none;position:fixed;inset:0;background:rgba(10,20,32,.55);z-index:210;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:14px;max-width:440px;width:calc(100% - 40px);padding:22px 22px 18px;box-shadow:0 24px 60px rgba(8,20,35,.35)">
+      <h3 style="margin:0 0 6px;font-size:16px">🔑 云端写入密钥</h3>
+      <p style="margin:0 0 10px;font-size:13px;color:#5a6b7e;line-height:1.6">
+        保存到云端需要一个 GitHub 细粒度令牌（管理员持有）。令牌只保存在<b>本浏览器</b>中，不会出现在公开网页里。<br>
+        获取方式：GitHub → Settings → Developer settings → Fine-grained tokens → 勾选仓库 <code>testhub-data</code>、Contents 权限 <code>Read and write</code>。
+      </p>
+      <input id="fgTokenInput" type="password" placeholder="粘贴 github_pat_ 开头的令牌" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1px solid #d5dce5;border-radius:9px;font-size:13px" autocomplete="off">
+      <p id="fgTokenErr" style="display:none;margin:8px 0 0;font-size:12.5px;color:#d64545">令牌无效或没有写权限，请检查后重新输入。</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+        <button class="btn btn-ghost" id="fgTokenCancel">取消</button>
+        <button class="btn btn-ghost" id="fgTokenClear">清除</button>
+        <button class="btn btn-primary" id="fgTokenOk">保存密钥</button>
+      </div>
+    </div>
+  </div>
   <style>
     td.fill { min-width: 90px; }
     td.fill:not(.unlocked) { cursor: pointer; }
@@ -147,7 +164,9 @@
     /* 云端存储：GitHub 仓库 testhub-data（读公开接口；写需细粒度令牌，仅限该数据仓库） */
     var GH_REPO = "yany-bit/testhub-data";
     var GH_FILE = "fengong.json";
-    var GH_TOKEN = "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"; /* 细粒度 PAT：仅授权 testhub-data 的 Contents 读写，已验证无法写主站仓库 */
+    var GH_TOKEN_KEY = "th_fg_token";
+    function getToken() { try { return localStorage.getItem(GH_TOKEN_KEY) || ""; } catch (e) { return ""; } }
+    /* 令牌只保存在编辑者自己的浏览器中，绝不写入公开网页——否则会被 GitHub 密钥扫描自动吊销 */
     var GH_API = "https://api.github.com/repos/" + GH_REPO + "/contents/" + GH_FILE + "?ref=main";
     var GH_RAW = "https://raw.githubusercontent.com/" + GH_REPO + "/main/" + GH_FILE;
 
@@ -163,7 +182,8 @@
     var fileSha = null; /* 云端文件当前版本号，保存时用于更新 */
     function ghHeaders() {
       var h = { "Accept": "application/vnd.github+json", "Cache-Control": "no-store" };
-      if (GH_TOKEN) h["Authorization"] = "Bearer " + GH_TOKEN;
+      var tk = getToken();
+      if (tk) h["Authorization"] = "Bearer " + tk;
       return h;
     }
     function cloudRead() {
@@ -187,7 +207,7 @@
         content: utf8ToB64(JSON.stringify(data, null, 2))
       };
       if (fileSha) body.sha = fileSha;
-      if (!GH_TOKEN) return Promise.reject(new Error("token 未配置"));
+      if (!getToken()) return Promise.reject(new Error("no-token"));
       return fetch(GH_API, {
         method: "PUT",
         headers: ghHeaders(),
@@ -290,31 +310,77 @@
       });
     });
 
+    /* --- 密钥对话框 --- */
+    var tokDlg = document.getElementById("fgTokenDlg");
+    var tokInput = document.getElementById("fgTokenInput");
+    var tokErr = document.getElementById("fgTokenErr");
+    var tokRetry = null; /* 密钥保存成功后要重试的动作 */
+    function openTokDlg(retry) {
+      tokRetry = retry || null;
+      tokErr.style.display = "none";
+      tokInput.value = getToken() || "";
+      tokDlg.style.display = "flex";
+      setTimeout(function () { tokInput.focus(); }, 60);
+    }
+    function tokTest(tk) {
+      /* 校验令牌能否写数据仓库：取一次文件元信息 */
+      return fetch(GH_API + "&t=" + Date.now(), { cache: "no-store", headers: { "Accept": "application/vnd.github+json", "Authorization": "Bearer " + tk } })
+        .then(function (r) { return r.ok; })
+        .catch(function () { return false; });
+    }
+    document.getElementById("fgKey").addEventListener("click", function () { openTokDlg(null); });
+    document.getElementById("fgTokenCancel").addEventListener("click", function () { tokDlg.style.display = "none"; tokRetry = null; });
+    document.getElementById("fgTokenClear").addEventListener("click", function () {
+      localStorage.removeItem(GH_TOKEN_KEY);
+      tokDlg.style.display = "none"; tokRetry = null;
+      alert("已清除本浏览器保存的密钥。");
+    });
+    document.getElementById("fgTokenOk").addEventListener("click", function () {
+      var tk = tokInput.value.trim();
+      if (!tk) { tokErr.style.display = "block"; return; }
+      tokErr.style.display = "none";
+      tokTest(tk).then(function (ok) {
+        if (!ok) { tokErr.style.display = "block"; return; }
+        localStorage.setItem(GH_TOKEN_KEY, tk);
+        tokDlg.style.display = "none";
+        var act = tokRetry; tokRetry = null;
+        if (act) act();
+      });
+    });
+    tokInput.addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("fgTokenOk").click(); });
+
     /* --- 保存：验证后写入云端，全站访客刷新即可看到 --- */
     var saveBtn = document.getElementById("fgSave");
-    saveBtn.addEventListener("click", function () {
-      requireGate(function () {
-        var data = collect();
-        saveBtn.disabled = true; saveBtn.textContent = "保存中…";
-        /* 保存前先取云端最新版本号，避免覆盖他人修改 */
-        var ensureSha = fileSha
-          ? Promise.resolve()
-          : fetch(GH_API + "&t=" + Date.now(), { cache: "no-store", headers: ghHeaders() })
-              .then(function (r) { if (r.ok) return r.json(); })
-              .then(function (j) { if (j && j.sha) fileSha = j.sha; })
-              .catch(function () {});
-        ensureSha.then(function () { return cloudWrite(data); }).then(function () {
-          localStorage.removeItem(KEY);
-          saveBtn.textContent = "已同步 ✓";
-          setTimeout(function () { saveBtn.textContent = "保存"; saveBtn.disabled = false; }, 1500);
-          alert("已保存并同步到云端！所有人打开或刷新本页面即可看到最新分工。");
-        }).catch(function () {
+    function doSave(data) {
+      saveBtn.disabled = true; saveBtn.textContent = "保存中…";
+      /* 保存前先取云端最新版本号，避免覆盖他人修改 */
+      var ensureSha = fileSha
+        ? Promise.resolve()
+        : fetch(GH_API + "&t=" + Date.now(), { cache: "no-store", headers: ghHeaders() })
+            .then(function (r) { if (r.ok) return r.json(); })
+            .then(function (j) { if (j && j.sha) fileSha = j.sha; })
+            .catch(function () {});
+      ensureSha.then(function () { return cloudWrite(data); }).then(function () {
+        localStorage.removeItem(KEY);
+        saveBtn.textContent = "已同步 ✓";
+        setTimeout(function () { saveBtn.textContent = "保存"; saveBtn.disabled = false; }, 1500);
+        alert("已保存并同步到云端！所有人打开或刷新本页面即可看到最新分工。");
+      }).catch(function (err) {
+        saveBtn.textContent = "保存";
+        saveBtn.disabled = false;
+        var msg = (err && err.message) || "";
+        if (msg === "no-token" || msg.indexOf("401") >= 0 || msg.indexOf("403") >= 0) {
+          /* 缺密钥或密钥失效 → 弹出密钥框，填好后自动重试保存 */
+          alert("需要云端写入密钥（或原密钥已失效）。\n请在弹出的窗口中粘贴管理员密钥，保存后会自动重试。");
+          openTokDlg(function () { doSave(collect()); });
+        } else {
           localStorage.setItem(KEY, JSON.stringify(data));
-          saveBtn.textContent = "保存";
-          saveBtn.disabled = false;
           alert("云端暂时不可用，本次修改已保存在本浏览器。\n请稍后重试，或联系管理员检查云端存储状态。");
-        });
+        }
       });
+    }
+    saveBtn.addEventListener("click", function () {
+      requireGate(function () { doSave(collect()); });
     });
 
     /* --- 编辑过程中：Enter 结束输入；失焦暂存本地（防丢） --- */
