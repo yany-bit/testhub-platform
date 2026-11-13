@@ -305,7 +305,7 @@
       var demoSteps = [
         { m: "GET", u: "https://jsonplaceholder.typicode.com/posts/1" },
         { m: "GET", u: "https://jsonplaceholder.typicode.com/users/1" },
-        { m: "POST", u: "https://jsonplaceholder.typicode.com/posts", b: { title: "TestHub 演示", body: "第五组一体化平台自动发帖测试", userId: 5 } }
+        { m: "POST", u: "https://jsonplaceholder.typicode.com/posts", b: { title: "TestHub 演示", body: "第十组一体化平台自动发帖测试", userId: 5 } }
       ];
       var di = 0;
       var demoNext = function () {
