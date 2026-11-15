@@ -8,6 +8,9 @@
     { t: "首页", href: "index.html", icon: "🏠", k: "index", ch: [
       ["测试能力", "index-1"], ["软件测试项目", "index-2"], ["一体化测试流程", "index-3"], ["平台能力", "index-4"]
     ]},
+    { t: "质量看板", href: "dashboard.html", icon: "📊", k: "dashboard", ch: [
+      ["核心质量指标", "dashboard-0"], ["质量度量图表", "dashboard-1"], ["缺陷清单与风险", "dashboard-2"]
+    ]},
     { t: "界面测试", href: "ui.html", icon: "🖥️", k: "ui", ch: [
       ["断言分组查询器", "ui-0"], ["测试设计", "ui-2"], ["执行时间线", "ui-3"], ["执行取证", "ui-4"], ["测试结论", "ui-5"]
     ]},
